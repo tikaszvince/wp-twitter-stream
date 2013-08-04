@@ -9,8 +9,6 @@
  * @copyright 2013 Vince Tikász
  */
 
-require_once dirname(__FILE__) . '/../twitter-api-php/TwitterAPIExchange.php';
-
 /**
  * WP Twitter Stream Cron.
  *
