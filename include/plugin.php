@@ -68,6 +68,12 @@ class WP_Twitter_Stream_Plugin {
     'screen_name' => 'Users screen name',
   );
 
+  /** @var TwitterAPIExchange */
+  protected $api;
+
+  /** @var array */
+  protected $api_options;
+
   /**
    * Initialize the plugin by setting localization, filters, and administration functions.
    *
@@ -106,6 +112,34 @@ class WP_Twitter_Stream_Plugin {
     }
 
     return self::$instance;
+  }
+
+  /**
+   * Get instance of Twitter API.
+   * @return TwitterAPIExchange
+   * @throws Exception
+   */
+  public function get_api() {
+    if (isset($this->api)) {
+      return $this->api;
+    }
+    return $this->api = new TwitterAPIExchange($this->get_api_options());
+  }
+
+  /**
+   * Get API options.
+   * @return array
+   */
+  public function get_api_options() {
+    $options = get_option(WP_Twitter_Stream_Plugin::SLUG);
+    $this->api_options = array(
+      'oauth_access_token' => $options['oauth_access_token'],
+      'oauth_access_token_secret' => $options['oauth_access_token_secret'],
+      'consumer_key' => $options['consumer_key'],
+      'consumer_secret' => $options['consumer_secret'],
+      'screen_name' => $options['screen_name'],
+    );
+    return $this->api_options;
   }
 
   /**
