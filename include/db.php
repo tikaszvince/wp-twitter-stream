@@ -102,7 +102,7 @@ class WP_Twitter_Stream_Db {
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         twitter_id BIGINT NOT NULL,
         time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-        last_checked DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        last_checked datetime,
         rt TINYINT(1) DEFAULT 0 NOT NULL,
         reply TINYINT(1) DEFAULT 0 NOT NULL,
         author_id BIGINT NOT NULL,
@@ -290,5 +290,40 @@ class WP_Twitter_Stream_Db {
     $query = self::wpdb()->prepare($sql, intval($id));
     self::$cache[__FUNCTION__][$id] = self::wpdb()->get_results($query, OBJECT);
     return self::$cache[__FUNCTION__][$id];
+  }
+
+  static public function update_tweet_display($id, $row) {
+    $data = array(
+      'display' => $row['display'],
+      'parser_version' => $row['parser_version'],
+    );
+    $where = array('id' => $id);
+    $format = array('%s', '%s');
+    $where_format = array('%d');
+    self::wpdb()->update(self::$tweets, $data, $where, $format, $where_format);
+  }
+
+  static public function get_tweets($instance) {
+    $tweets = self::$tweets;
+    $sql = "
+      SELECT
+        *
+      FROM
+        {$tweets}
+      WHERE
+        last_checked IS NOT NULL
+      ORDER BY time DESC
+      LIMIT %d";
+    $count = isset($instance['count']) ? $instance['count'] : 10;
+    $query = self::wpdb()->prepare($sql, $count);
+    $result = self::wpdb()->get_results($query, ARRAY_A);
+    foreach ($result as $row) {
+      self::$cache['get_tweet'][$row['id']] = $row;
+    }
+    return $result;
+  }
+
+  static public function hide($id) {
+    self::wpdb()->update(self::$tweets, array('last_checked' => null), array('id' => $id));
   }
 }
