@@ -44,6 +44,24 @@ class WP_Twitter_Stream_Db {
   static public $tw2ht;
 
   /**
+   * Tweet table field formats.
+   * @var array
+   */
+  static protected $field_format = array(
+    'twitter_id' => '%d',
+    'time' => '%s',
+    'last_checked' => '%s',
+    'rt' => '%d',
+    'reply' => '%d',
+    'author_id' => '%d',
+    'author' => '%s',
+    'parser_version' => '%s',
+    'text' => '%s',
+    'display' => '%s',
+    'raw_data' => '%s',
+  );
+
+  /**
    * Prefix table name.
    *
    * @param string $table
@@ -113,32 +131,23 @@ class WP_Twitter_Stream_Db {
   /**
    * Save tweet data into database.
    *
-   * @param array $row
+   * @param array $data
    *   The parsed tweet data.
    * @return bool|int
    *   If saving was successful will return the local tweet ID otherwise FALSE.
    */
-  static public function save_tweet($row) {
-    // TODO: now we assume the $row has the fields in the same order as the
-    // TODO: format array. We have to create a new array with the proper order
-    // TODO: of the fields.
-    $res = self::wpdb()->insert(
-      self::$tweets,
-      $row,
-      array(
-        '%d', // twitter_id
-        '%s', // time
-        '%d', // rt
-        '%d', // reply
-        '%d', // author_id
-        '%s', // author
-        '%s', // parser_version
-        '%s', // text
-        '%s', // display
-        '%s', // raw_data
-      )
-    );
-    if ($res) {
+  static public function save_tweet($data) {
+    $row = array();
+    $format = array();
+    foreach (self::$field_format as $col => $format) {
+      if (!isset($data[$col])) {
+        continue;
+      }
+      $row[$col] = $data[$col];
+      $format[] = $format;
+    }
+
+    if (self::wpdb()->insert(self::$tweets, $row, $format)) {
       return self::wpdb()->insert_id;
     }
     return false;
