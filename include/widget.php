@@ -106,9 +106,15 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * @return void
    */
   public function form($instance) {
-    // TODO: Define default values for your variables
+    $defaults = array(
+      'count' => 10,
+      'id' => null,
+      'template' => null,
+      'title' => null,
+    );
     $instance = wp_parse_args(
-      (array) $instance
+      (array) $instance,
+      $defaults
     );
 
     // TODO: Store the values of the widget in their own variable
@@ -152,7 +158,11 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   public function get_tweets($instance) {
     // Will read until tweet count reach the number the widget perform, but
     // we will try to fill the list only 3 times.
-    $count = isset($instance['count']) ? intval($instance['count']) : 10;
+    $count = 10;
+    if (isset($instance['count']) && ($_count = intval($instance['count'])) > 0) {
+      $count = $_count;
+    }
+
     $max_read = 3;
     do {
       $this->read_tries++;
@@ -203,11 +213,11 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       'widget-twitter-stream.php',
     );
     $id = str_replace(WP_Twitter_Stream_Plugin::SLUG . '-', '', $args['widget_id']);
-    if (isset($instance['id'])) {
-      $id = $id;
+    if (isset($instance['id']) && trim(esc_attr($instance['id']))) {
+      $id = trim(esc_attr($instance['id']));
     }
     $templates[] = 'widget-twitter-stream-' . $id . '.php';
-    if (isset($instance['template'])) {
+    if (isset($instance['template']) && $instance['template']) {
       $templates[] = $instance['template'];
     }
     return array_reverse($templates);

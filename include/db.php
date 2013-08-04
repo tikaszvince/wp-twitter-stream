@@ -342,7 +342,12 @@ class WP_Twitter_Stream_Db {
         last_checked IS NOT NULL
       ORDER BY time DESC
       LIMIT %d";
-    $count = isset($instance['count']) ? $instance['count'] : 10;
+
+    $count = 10;
+    if (isset($instance['count']) && ($_count = intval($instance['count'])) > 0) {
+      $count = $_count;
+    }
+
     $query = self::wpdb()->prepare($sql, $count);
     $result = self::wpdb()->get_results($query, ARRAY_A);
     foreach ($result as $row) {
