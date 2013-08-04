@@ -59,7 +59,7 @@ class WP_Twitter_Stream_Import {
     $tweets = $this->get_tweets();
     foreach ($tweets as $tweet) {
       // We need a new parser.
-      $parser = $this->getParser($tweet);
+      $parser = $this->get_parser($tweet);
       $data = $parser->get_parsed_row();
 
       // Save new hashtags if any and get the list of hashtag IDs and add the
@@ -117,7 +117,7 @@ class WP_Twitter_Stream_Import {
    * @return WP_Twitter_Stream_Parser
    *   The parser.
    */
-  protected function getParser($tweet) {
+  protected function get_parser($tweet) {
     return new WP_Twitter_Stream_Parser($tweet);
   }
 }
