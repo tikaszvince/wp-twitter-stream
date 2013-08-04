@@ -219,13 +219,15 @@ class WP_Twitter_Stream_Db {
   /**
    * Connect tweet with hashtag.
    *
-   * @param array $data
-   *   The parsed tweet data.
+   * @param int $tid
+   *   Tweet id.
+   * @param array $hashtag_ids
+   *   List of hashtag IDs.
    */
-  static public function add_hashtags($data) {
-    foreach ($data['hashtag_ids'] as $hid) {
+  static public function add_hashtags($tid, $hashtag_ids) {
+    foreach ($hashtag_ids as $hid) {
       self::wpdb()->insert(self::$tw2ht, array(
-        'tid' => $data['tweet_id'],
+        'tid' => $tid,
         'hid' => $hid,
       ));
     }
