@@ -59,7 +59,7 @@ class WP_Twitter_Stream_Import {
       if ($data['tweet_id']) {
         // Connect tweet with hashtags. We will use these connections in
         // filtered twitter stream widget.
-        WP_Twitter_Stream_Db::add_hashtags($data['tweet_id'], $data);
+        WP_Twitter_Stream_Db::add_hashtags($data['tweet_id'], $data['hashtag_ids']);
       }
     }
 
