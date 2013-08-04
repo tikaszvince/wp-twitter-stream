@@ -17,6 +17,8 @@
  * @var array $instance Current settings
  * @var array $filter_modes Available filter modes
  * @var array $hashtags Available hashtags
+ * @var array $template_candidates Template candidates.
+ * @var array $templates Available templates.
  */
 
 ?>
@@ -74,3 +76,40 @@
     <?php endforeach; ?>
   </div>
 </div>
+
+<h3>Templates</h3>
+
+<p>
+  <label for="<?php echo $this->get_field_id('id'); ?>">
+    <?php _e('Widget machine name:', WP_Twitter_Stream_Plugin::SLUG); ?>
+  </label>
+  <input class="widefat" type="text"
+    id="<?php echo $this->get_field_id('id'); ?>"
+    name="<?php echo $this->get_field_name('id'); ?>"
+    value="<?php echo esc_attr($instance['id']); ?>" />
+</p>
+
+<div class="description">
+  <strong><?php _e('Available template candidates', WP_Twitter_Stream_Plugin::SLUG); ?></strong>
+  <ol>
+    <?php foreach ($template_candidates as $template) : ?>
+      <li><?php echo $template ?></li>
+    <?php endforeach; ?>
+  </ol>
+</div>
+
+<?php if (count($templates) > 1) : ?>
+  <p>
+    <label for="<?php echo $this->get_field_id('template'); ?>">
+      <?php _e('Template file:', WP_Twitter_Stream_Plugin::SLUG); ?>
+    </label>
+    <select class="widefat"
+      id="<?php echo $this->get_field_id('template'); ?>"
+      name="<?php echo $this->get_field_name('template'); ?>">
+      <?php foreach ($templates as $file) : ?>
+        <?php $selected = $file == $instance['template'] ? ' selected="selected"' : ''; ?>
+        <?php echo '<option value="', $file, '"', $selected, '>', $file , '</option>'; ?>
+      <?php endforeach; ?>
+    </select>
+  </p>
+<?php endif; ?>

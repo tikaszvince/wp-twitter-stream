@@ -45,7 +45,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   protected $default_settings = array(
     'count' => 10,
     'id' => null,
-    'template' => null,
+    'template' => 'auto',
     'title' => null,
     'filter_mode' => self::FILTER_MODE_ALL,
     'hashtags' => array(),
@@ -89,7 +89,11 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     $this->reset();
     $tweets = $this->get_tweets($instance);
     $templates = $this->get_template_names($instance);
-    if (!$template_file = locate_template($templates)) {
+
+    if (
+      $instance['template'] == 'auto'
+      || !$template_file = locate_template($templates)
+    ) {
       $template_file = 'views/widget.php';
     }
     $widget = $this;
@@ -153,7 +157,8 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     );
     $hashtags = $this->get_hashtags();
     $widget = $this;
-    $templates = $this->get_template_names($instance);
+    $template_candidates = $this->get_template_names($instance);
+    $templates = $this->get_templates($template_candidates);
 
     // Display the admin form
     include 'views/widget.form.php';
@@ -253,10 +258,49 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       $id = trim(esc_attr($instance['id']));
     }
     $templates[] = 'widget-twitter-stream-' . $id . '.php';
-    if (isset($instance['template']) && $instance['template']) {
+    if (isset($instance['template']) && $instance['template'] && $instance['template'] != 'auto') {
       $templates[] = $instance['template'];
     }
     return array_reverse($templates);
+  }
+
+  /**
+   * Find available template files.
+   *
+   * @param array $template_candidates
+   *   List of template candidates.
+   *
+   * @return array
+   *   List of available templates.
+   */
+  protected function get_templates($template_candidates) {
+    // Use auto discovery to find template file to use.
+    $files = array(
+      'auto' => __('Use auto discovery', WP_Twitter_Stream_Plugin::SLUG),
+    );
+
+    // If theme has a default template we could use it.
+    if (locate_template('widget-twitter-stream.php')) {
+      $files['system_default'] = __('Use system default template', WP_Twitter_Stream_Plugin::SLUG);
+    }
+
+    foreach ($template_candidates as $template) {
+      if ($file = locate_template($template)) {
+        if ('widget-twitter-stream.php' == $template) {
+          continue;
+        }
+        // If candidate is available could use it.
+        $files[$template] = $template;
+      }
+    }
+
+    // If theme define multiple templates we could use them too
+    $theme = glob(TEMPLATEPATH . '/wp-twitter-stream/*');
+    foreach ($theme as $file) {
+      $files['wp-twitter-stream/' . basename($file)] = basename($file);
+    }
+
+    return $files;
   }
 
   /**
