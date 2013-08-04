@@ -342,24 +342,13 @@ class WP_Twitter_Stream_Db {
    * @return mixed
    */
   static public function get_tweets($instance) {
-    $tweets = self::$tweets;
-    $sql = "
-      SELECT
-        *
-      FROM
-        {$tweets}
-      WHERE
-        last_checked IS NOT NULL
-      ORDER BY time DESC
-      LIMIT %d";
-
-    $count = 10;
-    if (isset($instance['count']) && ($_count = intval($instance['count'])) > 0) {
-      $count = $_count;
+    $query = new WP_Twitter_Stream_Query();
+    $query->set_limit($instance['count']);
+    if (!empty($instance['hashtags'])) {
+      $query->set_hashtag_ids($instance['hashtags'], $instance['filter_mode']);
     }
 
-    $query = self::wpdb()->prepare($sql, $count);
-    $result = self::wpdb()->get_results($query, ARRAY_A);
+    $result = $query->get_result();
     foreach ($result as $row) {
       self::$cache['get_tweet'][$row['id']] = $row;
     }
