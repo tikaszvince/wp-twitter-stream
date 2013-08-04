@@ -89,7 +89,7 @@ class WP_Twitter_Stream_Import {
    * @return array
    */
   protected function getTweets() {
-    $api = $this->getApi();
+    $api = WP_Twitter_Stream_Plugin::get_instance()->get_api();
 
     $timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
     $get = array(
@@ -109,22 +109,6 @@ class WP_Twitter_Stream_Import {
       ->buildOauth($timeline_url, 'GET');
 
     return json_decode($api->performRequest());
-  }
-
-  /**
-   * @return TwitterAPIExchange
-   * @throws Exception
-   */
-  protected function getApi() {
-    if (isset($this->api)) {
-      return $this->api;
-    }
-
-    if (!isset($this->options)) {
-      throw new Exception('Importer options are missing');
-    }
-
-    return $this->api = new TwitterAPIExchange($this->options);
   }
 
   /**
