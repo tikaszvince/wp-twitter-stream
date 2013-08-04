@@ -219,26 +219,19 @@ class WP_Twitter_Stream_Plugin {
    *   Return early if no settings page is registered.
    */
   public function admin_enqueue_scripts() {
-    if (!isset( $this->plugin_screen_hook_suffix)) {
-      return;
-    }
+    wp_enqueue_style(
+      self::SLUG . '-admin-styles',
+      plugins_url('../css/admin.css', __FILE__),
+      array(),
+      self::VERSION
+    );
 
-    $screen = get_current_screen();
-    if ($screen->id == $this->plugin_screen_hook_suffix) {
-      wp_enqueue_style(
-        self::SLUG . '-admin-styles',
-        plugins_url('css/admin.css', __FILE__),
-        array(),
-        self::VERSION
-      );
-
-      wp_enqueue_script(
-        self::SLUG . '-admin-script',
-        plugins_url('js/admin.js', __FILE__),
-        array('jquery'),
-        self::VERSION
-      );
-    }
+    wp_enqueue_script(
+      self::SLUG . '-admin-script',
+      plugins_url('../js/admin.js', __FILE__),
+      array('jquery'),
+      self::VERSION
+    );
   }
 
   /**
@@ -249,14 +242,14 @@ class WP_Twitter_Stream_Plugin {
   public function wp_enqueue_scripts() {
     wp_enqueue_style(
       self::SLUG . '-plugin-styles',
-      plugins_url('css/public.css', __FILE__),
+      plugins_url('../css/public.css', __FILE__),
       array(),
       self::VERSION
     );
 
     wp_enqueue_script(
       self::SLUG . '-plugin-script',
-      plugins_url('js/public.js', __FILE__),
+      plugins_url('../js/public.js', __FILE__),
       array('jquery'),
       self::VERSION
     );

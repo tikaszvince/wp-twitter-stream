@@ -7,3 +7,9 @@
  * @link http://vince.tikasz.hu
  * @copyright 2013 Vince Tikász
  */
+
+.wp-twitter-stream-hashtag-list {}
+.wp-twitter-stream-hashtag-list .hashtag-list {
+  max-height: 10em;
+  overflow: auto;
+}
