@@ -24,8 +24,6 @@ class WP_Twitter_Stream_Import {
 
   /** @var array */
   protected $options;
-  /** @var TwitterAPIExchange */
-  protected $api;
 
   /**
    * Set importer options.
@@ -36,18 +34,6 @@ class WP_Twitter_Stream_Import {
    */
   public function set_options(array $options) {
     $this->options = $options;
-    return $this;
-  }
-
-  /**
-   * Set Twitter API.
-   *
-   * @param TwitterAPIExchange $api
-   *  The api object..
-   * @return WP_Twitter_Stream_Import
-   */
-  public function set_api(TwitterAPIExchange $api) {
-    $this->api = $api;
     return $this;
   }
 
