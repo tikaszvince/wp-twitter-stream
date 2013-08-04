@@ -68,18 +68,16 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   public function widget($args, $instance) {
     extract($args, EXTR_SKIP);
 
-    /**
-     * @var String $before_widget
-     * @var String $after_widget
-     */
-    echo $before_widget;
-
     $this->reset();
     $tweets = $this->get_tweets($instance);
+    $templates = $this->get_template_names($args, $instance);
+    if (!$template_file = locate_template($templates)) {
+      $template_file = 'views/widget.php';
+    }
+    $widget = $this;
+    $display_title = $this->display_title($args, $instance);
 
-    include 'views/widget.php';
-
-    echo $after_widget;
+    require $template_file;
   }
 
   /**
@@ -189,5 +187,45 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       }
       $this->tweets[] = $tweet;
     }
+  }
+
+  /**
+   * Get candidate template names.
+   *
+   * @param array $args The array of form elements
+   * @param array $instance The current instance of the widget
+   *
+   * @return array
+   *   The list of template names.
+   */
+  protected function get_template_names($args, $instance) {
+    $templates = array(
+      'widget-twitter-stream.php',
+    );
+    $id = str_replace(WP_Twitter_Stream_Plugin::SLUG . '-', '', $args['widget_id']);
+    if (isset($instance['id'])) {
+      $id = $id;
+    }
+    $templates[] = 'widget-twitter-stream-' . $id . '.php';
+    if (isset($instance['template'])) {
+      $templates[] = $instance['template'];
+    }
+    return array_reverse($templates);
+  }
+
+  /**
+   * Render widget title.
+   *
+   * @param array $args The array of form elements
+   * @param array $instance The current instance of the widget
+   *
+   * @return string
+   *   The rendered widget title.
+   */
+  protected function display_title($args, $instance) {
+    if (isset($instance['title']) && $instance['title']) {
+      return $args['before_title'] . $instance['title'] . $args['after_title'];
+    }
+    return '';
   }
 }
