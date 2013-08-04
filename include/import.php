@@ -56,7 +56,7 @@ class WP_Twitter_Stream_Import {
    */
   public function do_import() {
     // Perform request.
-    $tweets = $this->getTweets();
+    $tweets = $this->get_tweets();
     foreach ($tweets as $tweet) {
       // We need a new parser.
       $parser = $this->getParser($tweet);
@@ -88,7 +88,7 @@ class WP_Twitter_Stream_Import {
    * Get tweets from Twitter API.
    * @return array
    */
-  protected function getTweets() {
+  protected function get_tweets() {
     $api = WP_Twitter_Stream_Plugin::get_instance()->get_api();
 
     $timeline_url = 'https://api.twitter.com/1.1/statuses/user_timeline.json';
