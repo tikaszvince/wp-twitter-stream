@@ -61,6 +61,8 @@ class WP_Twitter_Stream_Db {
     'raw_data' => '%s',
   );
 
+  static protected $cache = array();
+
   /**
    * Prefix table name.
    *
@@ -240,5 +242,53 @@ class WP_Twitter_Stream_Db {
   static public function get_latest_tweet_id() {
     $table = self::$tweets;
     return self::wpdb()->get_var("SELECT twitter_id FROM {$table} ORDER BY time DESC LIMIT 1");
+  }
+
+  /**
+   * Get a row from tweets table.
+   *
+   * @param int $id
+   *   The local tweet id.
+   *
+   * @return array|NULL
+   */
+  static public function get_tweet($id) {
+    if (isset(self::$cache[__FUNCTION__][$id])) {
+      return self::$cache[__FUNCTION__][$id];
+    }
+
+    $table = self::$tweets;
+    $query = self::wpdb()->prepare("SELECT * FROM {$table} WHERE id = %s", intval($id));
+    self::$cache[__FUNCTION__][$id] = self::wpdb()->get_row($query, ARRAY_A);
+    return self::$cache[__FUNCTION__][$id];
+  }
+
+  /**
+   * Get tweets hashtags.
+   *
+   * @param int $id
+   *   The local tweet id.
+   *
+   * @return array|NULL
+   */
+  static public function get_hashtag_for_tweet($id) {
+    if (isset(self::$cache[__FUNCTION__][$id])) {
+      return self::$cache[__FUNCTION__][$id];
+    }
+
+    $tw2ht = self::$tw2ht;
+    $hashtags = self::$hashtags;
+    $sql = "
+      SELECT
+        h.*
+      FROM
+        {$tw2ht} AS c
+        LEFT JOIN {$hashtags} AS h ON (h.id = c.hid)
+      WHERE
+        c.tid = %s
+      ORDER BY h.id";
+    $query = self::wpdb()->prepare($sql, intval($id));
+    self::$cache[__FUNCTION__][$id] = self::wpdb()->get_results($query, OBJECT);
+    return self::$cache[__FUNCTION__][$id];
   }
 }
