@@ -21,6 +21,19 @@
 class WP_Twitter_Stream_Widget extends WP_Widget {
 
   /**
+   * Tweets to display
+   * @var array
+   */
+  protected $tweets = array();
+
+  /**
+   * Read tries counter.
+   * @see WP_Twitter_Stream_Widget::get_tweets()
+   * @var int
+   */
+  protected $read_tries = 0;
+
+  /**
    * WP_Widget constructor.
    */
   public function WP_Twitter_Stream_Widget() {
@@ -60,6 +73,9 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
      * @var String $after_widget
      */
     echo $before_widget;
+
+    $this->reset();
+    $tweets = $this->get_tweets($instance);
 
     include 'views/widget.php';
 
@@ -122,5 +138,56 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       plugins_url('wp-twitter-stream/js/widget.js'),
       array('jquery')
     );
+  }
+
+  /**
+   * Get tweets to display
+   *
+   * @param array $instance
+   *   Widget instance settings:
+   *
+   * @return array
+   *   List of tweets to display.
+   *
+   * @see WP_Twitter_Stream_Db::get_tweets()
+   */
+  public function get_tweets($instance) {
+    // Will read until tweet count reach the number the widget perform, but
+    // we will try to fill the list only 3 times.
+    $count = isset($instance['count']) ? intval($instance['count']) : 10;
+    $max_read = 3;
+    do {
+      $this->read_tries++;
+      $this->read_tweets($instance);
+    } while ($this->read_tries < $max_read && $count > count($this->tweets));
+
+    return $this->tweets;
+  }
+
+  /**
+   * Reset tweets to display.
+   */
+  protected function reset() {
+    $this->tweets = array();
+    $this->read_tries = 0;
+  }
+
+  /**
+   * Read tweets from DB.
+   *
+   * @param array $instance
+   *   Widget settings.
+   *
+   * @see WP_Twitter_Stream_Db::get_tweets()
+   */
+  protected function read_tweets($instance) {
+    $results = WP_Twitter_Stream_Db::get_tweets($instance);
+    foreach ($results as $row) {
+      $tweet = new WP_Twitter_Stream_Tweet($row['id']);
+      if ($tweet->is_deleted()) {
+        continue;
+      }
+      $this->tweets[] = $tweet;
+    }
   }
 }
