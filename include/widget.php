@@ -20,11 +20,6 @@
  */
 class WP_Twitter_Stream_Widget extends WP_Widget {
 
-  /** Define filter mode constants */
-  const FILTER_MODE_ALL = 0;
-  const FILTER_MODE_EXCLUDE = 1;
-  const FILTER_MODE_INCLUDE = 2;
-
   /**
    * Tweets to display
    * @var array
@@ -47,7 +42,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     'id' => null,
     'template' => 'auto',
     'title' => null,
-    'filter_mode' => self::FILTER_MODE_ALL,
+    'filter_mode' => WP_Twitter_Stream_Query::FILTER_MODE_ALL,
     'hashtags' => array(),
   );
 
@@ -151,9 +146,9 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     );
 
     $filter_modes = array(
-      self::FILTER_MODE_ALL => __('Show All', WP_Twitter_Stream_Plugin::SLUG),
-      self::FILTER_MODE_INCLUDE => __('Show tweets with hastags', WP_Twitter_Stream_Plugin::SLUG),
-      self::FILTER_MODE_EXCLUDE => __('Hide tweets with hastags', WP_Twitter_Stream_Plugin::SLUG),
+      WP_Twitter_Stream_Query::FILTER_MODE_ALL => __('Show All', WP_Twitter_Stream_Plugin::SLUG),
+      WP_Twitter_Stream_Query::FILTER_MODE_INCLUDE => __('Show tweets with hastags', WP_Twitter_Stream_Plugin::SLUG),
+      WP_Twitter_Stream_Query::FILTER_MODE_EXCLUDE => __('Hide tweets with hastags', WP_Twitter_Stream_Plugin::SLUG),
     );
     $hashtags = $this->get_hashtags();
     $widget = $this;
@@ -237,6 +232,10 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
         continue;
       }
       $this->tweets[] = $tweet;
+
+      if (count($this->tweets) >= $instance['count']) {
+        break;
+      }
     }
   }
 
