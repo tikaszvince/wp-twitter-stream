@@ -54,7 +54,7 @@ class WP_Twitter_Stream_Import {
   /**
    * Perform request to Twitter API and save tweets into database.
    */
-  public function doImport() {
+  public function do_import() {
     // Perform request.
     $tweets = $this->getTweets();
     foreach ($tweets as $tweet) {

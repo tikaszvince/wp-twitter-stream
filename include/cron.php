@@ -82,7 +82,7 @@ class WP_Twitter_Stream_Cron {
       'consumer_secret' => $options['consumer_secret'],
       'screen_name' => $options['screen_name'],
     ));
-    $import->doImport();
+    $import->do_import();
   }
 
   /**
