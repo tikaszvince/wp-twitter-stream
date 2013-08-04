@@ -23,7 +23,7 @@ class WP_Twitter_Stream_Db {
   /**
    * DB version
    */
-  const VERSION = '1.0.0:10';
+  const VERSION = '1.0.0:11';
 
   /**
    * Prefixed name of the tweets table.
@@ -140,16 +140,16 @@ class WP_Twitter_Stream_Db {
    */
   static public function save_tweet($data) {
     $row = array();
-    $format = array();
+    $formats = array();
     foreach (self::$field_format as $col => $format) {
       if (!isset($data[$col])) {
         continue;
       }
       $row[$col] = $data[$col];
-      $format[] = $format;
+      $formats[] = $format;
     }
 
-    if (self::wpdb()->insert(self::$tweets, $row, $format)) {
+    if (self::wpdb()->insert(self::$tweets, $row, $formats)) {
       return self::wpdb()->insert_id;
     }
     return false;
@@ -241,7 +241,17 @@ class WP_Twitter_Stream_Db {
    */
   static public function get_latest_tweet_id() {
     $table = self::$tweets;
-    return self::wpdb()->get_var("SELECT twitter_id FROM {$table} ORDER BY time DESC LIMIT 1");
+    $sql = "
+      SELECT
+        twitter_id
+      FROM
+        {$table}
+      WHERE
+        last_checked IS NOT NULL
+        AND last_checked <> '0000-00-00 00:00:00'
+      ORDER BY time DESC
+      LIMIT 1";
+    return self::wpdb()->get_var($sql);
   }
 
   /**
@@ -292,6 +302,15 @@ class WP_Twitter_Stream_Db {
     return self::$cache[__FUNCTION__][$id];
   }
 
+  /**
+   * Updates the display value of the tweet after new parser version run.
+   * @param int $id
+   *   The local tweet id.
+   * @param array $row
+   *   The new values array with two key:
+   *   - display: the new display value
+   *   - parser_version: the version string of the new parser.
+   */
   static public function update_tweet_display($id, $row) {
     $data = array(
       'display' => $row['display'],
@@ -303,6 +322,15 @@ class WP_Twitter_Stream_Db {
     self::wpdb()->update(self::$tweets, $data, $where, $format, $where_format);
   }
 
+  /**
+   * Read tweets from DB.
+   *
+   * @param array $instance
+   *   Query settings contains the following keys:
+   *   - count: (optional) The query limit. Default: 10.
+   *
+   * @return mixed
+   */
   static public function get_tweets($instance) {
     $tweets = self::$tweets;
     $sql = "
@@ -323,7 +351,37 @@ class WP_Twitter_Stream_Db {
     return $result;
   }
 
+  /**
+   * Mark tweet with given id as deleted.
+   * @param int $id
+   */
   static public function hide($id) {
-    self::wpdb()->update(self::$tweets, array('last_checked' => null), array('id' => $id));
+    $table = self::$tweets;
+    $sql = "
+      UPDATE
+        {$table}
+      SET
+        last_checked = NULL
+      WHERE id = %d";
+    $query = self::wpdb()->prepare($sql, $id);
+    self::wpdb()->query($query);
+  }
+
+  /**
+   * Update last_checked value of the tweet with given id.
+   * @param int $id
+   */
+  static public function still_exists($id) {
+    $time_zone = new DateTimeZone(get_option('timezone_string'));
+    $now = new DateTime('now', $time_zone);
+    $table = self::$tweets;
+    $sql = "
+      UPDATE
+        {$table}
+      SET
+        last_checked = %s
+      WHERE id = %d";
+    $query = self::wpdb()->prepare($sql, $now->format('Y-m-d H:i:s'), $id);
+    self::wpdb()->query($query);
   }
 }
