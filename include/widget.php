@@ -88,7 +88,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
 
     $this->reset();
     $tweets = $this->get_tweets($instance);
-    $templates = $this->get_template_names($args, $instance);
+    $templates = $this->get_template_names($instance);
     if (!$template_file = locate_template($templates)) {
       $template_file = 'views/widget.php';
     }
@@ -153,6 +153,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     );
     $hashtags = $this->get_hashtags();
     $widget = $this;
+    $templates = $this->get_template_names($instance);
 
     // Display the admin form
     include 'views/widget.form.php';
@@ -237,17 +238,17 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   /**
    * Get candidate template names.
    *
-   * @param array $args The array of form elements
-   * @param array $instance The current instance of the widget
+      * @param array $instance The current instance of the widget
    *
    * @return array
    *   The list of template names.
    */
-  protected function get_template_names($args, $instance) {
+  protected function get_template_names($instance) {
     $templates = array(
       'widget-twitter-stream.php',
+      'widget-twitter-stream--number-' . $this->number. '.php',
     );
-    $id = str_replace(WP_Twitter_Stream_Plugin::SLUG . '-', '', $args['widget_id']);
+    $id = $this->number;
     if (isset($instance['id']) && trim(esc_attr($instance['id']))) {
       $id = trim(esc_attr($instance['id']));
     }
