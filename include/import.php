@@ -34,7 +34,7 @@ class WP_Twitter_Stream_Import {
    *  The options array.
    * @return WP_Twitter_Stream_Import
    */
-  public function setOptions(array $options) {
+  public function set_options(array $options) {
     $this->options = $options;
     return $this;
   }

@@ -75,7 +75,7 @@ class WP_Twitter_Stream_Cron {
     require_once 'import.php';
     $options = get_option(WP_Twitter_Stream_Plugin::SLUG);
     $import = new WP_Twitter_Stream_Import();
-    $import->setOptions(array(
+    $import->set_options(array(
       'oauth_access_token' => $options['oauth_access_token'],
       'oauth_access_token_secret' => $options['oauth_access_token_secret'],
       'consumer_key' => $options['consumer_key'],
