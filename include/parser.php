@@ -78,12 +78,15 @@ class WP_Twitter_Stream_Parser {
    * @return array
    */
   public function get_parsed_row() {
+    $time_zone = new DateTimeZone(get_option('timezone_string'));
     $time = new DateTime($this->data->created_at);
-    $time->setTimezone(new DateTimeZone(get_option('timezone_string')));
+    $time->setTimezone($time_zone);
+    $checked = new DateTime('now', $time_zone);
     return array(
       'tweet' => array(
         'twitter_id' => $this->tweet->id,
         'time' => $time->format('Y-m-d H:i:s'),
+        'last_checked' => $checked->format('Y-m-d H:i:s'),
         'rt' => $this->retweeted(),
         'reply' => $this->is_reply(),
         'author_id' => $this->tweet->user->id,
