@@ -132,6 +132,9 @@ class WP_Twitter_Stream_Tweet {
       if ($deleted = !$this->check_still_exists()) {
         WP_Twitter_Stream_Db::hide($this->id);
       }
+      else {
+        WP_Twitter_Stream_Db::still_exists($this->id);
+      }
     }
     return $deleted;
   }
@@ -154,8 +157,24 @@ class WP_Twitter_Stream_Tweet {
    */
   public function check_still_exists() {
     $api = WP_Twitter_Stream_Plugin::get_instance()->get_api();
-    // TODO perform a request to Twitter API for this exact tweet
 
+    $url = 'https://api.twitter.com/1.1/statuses/show.json';
+    $get = array(
+      'id=' . $this->row['twitter_id']
+    );
+    $api
+      ->setGetfield('?' . join('&', $get))
+      ->buildOauth($url, 'GET');
+
+    $response = json_decode($api->performRequest());
+    if (
+      isset($response->errors)
+      && isset($response->errors[0])
+      && isset($response->errors[0]->code)
+      && $response->errors[0]->code == 34
+    ) {
+      return false;
+    }
     return true;
   }
 }
