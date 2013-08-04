@@ -23,7 +23,7 @@ class WP_Twitter_Stream_Db {
   /**
    * DB version
    */
-  const VERSION = '1.0.0:9';
+  const VERSION = '1.0.0:10';
 
   /**
    * Prefixed name of the tweets table.
@@ -82,6 +82,7 @@ class WP_Twitter_Stream_Db {
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         twitter_id BIGINT NOT NULL,
         time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        last_checked DEFAULT '0000-00-00 00:00:00' NOT NULL,
         rt TINYINT(1) DEFAULT 0 NOT NULL,
         reply TINYINT(1) DEFAULT 0 NOT NULL,
         author_id BIGINT NOT NULL,
