@@ -20,6 +20,11 @@
  */
 class WP_Twitter_Stream_Widget extends WP_Widget {
 
+  /** Define filter mode constants */
+  const FILTER_MODE_ALL = 0;
+  const FILTER_MODE_EXCLUDE = 1;
+  const FILTER_MODE_INCLUDE = 2;
+
   /**
    * Tweets to display
    * @var array
@@ -32,6 +37,19 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * @var int
    */
   protected $read_tries = 0;
+
+  /**
+   * Default settings
+   * @var array
+   */
+  protected $default_settings = array(
+    'count' => 10,
+    'id' => null,
+    'template' => null,
+    'title' => null,
+    'filter_mode' => self::FILTER_MODE_ALL,
+    'hashtags' => array(),
+  );
 
   /**
    * WP_Widget constructor.
@@ -93,7 +111,24 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   public function update($new_instance, $old_instance) {
     $instance = $old_instance;
 
-    // TODO: Here is where you update your widget's old values with the new, incoming values
+    foreach ($this->default_settings as $field => $default) {
+      $instance[$field] = isset($new_instance[$field]) ? $new_instance[$field] : false;
+      if (!$instance[$field]) {
+        $instance[$field] = $default;
+      }
+    }
+
+    $instance['count'] = intval($instance['count']);
+    if (!$instance['count']) {
+      $instance['count'] = $this->default_settings['count'];
+    }
+
+    $instance['title'] = strip_tags($new_instance['title']);
+    if (!$instance['title']) {
+      $instance['title'] = null;
+    }
+
+    $instance['filter_mode'] = intval($instance['filter_mode']);
 
     return $instance;
   }
@@ -106,18 +141,18 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * @return void
    */
   public function form($instance) {
-    $defaults = array(
-      'count' => 10,
-      'id' => null,
-      'template' => null,
-      'title' => null,
-    );
     $instance = wp_parse_args(
       (array) $instance,
-      $defaults
+      $this->default_settings
     );
 
-    // TODO: Store the values of the widget in their own variable
+    $filter_modes = array(
+      self::FILTER_MODE_ALL => __('Show All', WP_Twitter_Stream_Plugin::SLUG),
+      self::FILTER_MODE_INCLUDE => __('Show tweets with hastags', WP_Twitter_Stream_Plugin::SLUG),
+      self::FILTER_MODE_EXCLUDE => __('Hide tweets with hastags', WP_Twitter_Stream_Plugin::SLUG),
+    );
+    $hashtags = $this->get_hashtags();
+    $widget = $this;
 
     // Display the admin form
     include 'views/widget.form.php';
@@ -237,5 +272,13 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       return $args['before_title'] . $instance['title'] . $args['after_title'];
     }
     return '';
+  }
+
+  /**
+   * Get full list of hashtags.
+   * @return array
+   */
+  protected function get_hashtags() {
+    return WP_Twitter_Stream_Db::get_hashtags();
   }
 }
