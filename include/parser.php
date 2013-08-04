@@ -69,8 +69,18 @@ class WP_Twitter_Stream_Parser {
    * Get parsers version.
    * @return string
    */
-  public function get_version() {
+  static public function get_version() {
     return WP_Twitter_Stream_Plugin::VERSION;
+  }
+
+  /**
+   * Builds tweet object from parsed data.
+   * @return WP_Twitter_Stream_Tweet
+   */
+  public function get_tweet() {
+    $tweet = new WP_Twitter_Stream_Tweet();
+    $tweet->set_from_array($this->get_parsed_row());
+    return $tweet;
   }
 
   /**
@@ -104,7 +114,7 @@ class WP_Twitter_Stream_Parser {
    * Get display of this tweet.
    * @return string
    */
-  protected function display() {
+  public function display() {
     $this->get_text();
     $this->collect_replacements();
     return $this->replace();
