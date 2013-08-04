@@ -60,19 +60,9 @@ class WP_Twitter_Stream_Import {
     foreach ($tweets as $tweet) {
       // We need a new parser.
       $parser = $this->get_parser($tweet);
-      $data = $parser->get_parsed_row();
-
-      // Save new hashtags if any and get the list of hashtag IDs and add the
-      // hastag ID list to parsed data.
-      $data['hashtag_ids'] = WP_Twitter_Stream_Db::save_hashtags($data['hashtags']);
-
-      // Save tweet and add the new local ID to parsed data.
-      $data['tweet_id'] = WP_Twitter_Stream_Db::save_tweet($data['tweet']);
-      if ($data['tweet_id']) {
-        // Connect tweet with hashtags. We will use these connections in
-        // filtered twitter stream widget.
-        WP_Twitter_Stream_Db::add_hashtags($data['tweet_id'], $data['hashtag_ids']);
-      }
+      // Get tweet
+      $tweet = $parser->get_tweet();
+      $tweet->insert();
     }
 
     // Echo message.
