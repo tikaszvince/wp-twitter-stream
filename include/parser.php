@@ -70,7 +70,7 @@ class WP_Twitter_Stream_Parser {
    * @return string
    */
   static public function get_version() {
-    return WP_Twitter_Stream_Plugin::VERSION;
+    return WP_Twitter_Stream_Plugin::VERSION . ':1';
   }
 
   /**
@@ -303,7 +303,7 @@ class WP_Twitter_Stream_Parser {
         $replace = $this->replacements[$i];
         $start = $replace['indices'][0];
         $end = $replace['indices'][1] - $start;
-        $text = substr_replace($text, $replace['replace'], $start, $end);
+        $text = $this->substr_replace($text, $replace['replace'], $start, $end);
       }
     }
     return $text;
@@ -364,5 +364,75 @@ class WP_Twitter_Stream_Parser {
       'mention',
       $mention->name
     );
+  }
+
+  /**
+   * Multibyte safe substr_replace implementation
+   *
+   * @link http://docs.php.net/substr_replace#90146
+   * @link http://docs.php.net/substr_replace
+   *
+   * @param string $string
+   *   The input string
+   * @param string $replacement
+   *   The replacement string
+   * @param int $start
+   *   If start is positive, the replacing will begin at the start'th offset
+   *   into string.
+   *   If start is negative, the replacing will begin at the start'th character
+   *   from the end of string.
+   * @param int $length
+   *   If given and is positive, it represents the length of the portion of
+   *   string which is to be replaced. If it is negative, it represents the
+   *   number of characters from the end of string at which to stop replacing.
+   *   If it is not given, then it will default to strlen( string );
+   *   i.e. end the replacing at the end of string. Of course, if length is
+   *   zero then this function will have the effect of inserting replacement
+   *   into string at the given start offset.
+   * @param string $encoding
+   *   The encoding parameter is the character encoding. If it is omitted,
+   *   the internal character encoding value will be used.
+   *
+   * @return mixed|string
+   */
+  protected function substr_replace($string, $replacement, $start, $length = null, $encoding = null) {
+    if (extension_loaded('mbstring') !== true) {
+      return !isset($length)
+        ? substr_replace($string, $replacement, $start)
+        : substr_replace($string, $replacement, $start, $length);
+    }
+
+    $string_length = !isset($encoding)
+      ? mb_strlen($string)
+      : mb_strlen($string, $encoding);
+
+    if ($start < 0) {
+      $start = max(0, $string_length + $start);
+    }
+    elseif ($start > $string_length) {
+      $start = $string_length;
+    }
+
+    if ($length < 0) {
+      $length = max(0, $string_length - $start + $length);
+    }
+    elseif (!isset($length) || $length > $string_length) {
+      $length = $string_length;
+    }
+
+    if ($start + $length > $string_length) {
+      $length = $string_length - $start;
+    }
+
+    if (!isset($encoding)) {
+      $before_replacement = mb_substr($string, 0, $start);
+      $after_replacement = mb_substr($string, $start + $length, $string_length - $start - $length);
+    }
+    else {
+      $before_replacement = mb_substr($string, 0, $start, $encoding);
+      $after_replacement = mb_substr($string, $start + $length, $string_length - $start - $length, $encoding);
+    }
+
+    return $before_replacement . $replacement . $after_replacement;
   }
 }
