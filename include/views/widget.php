@@ -33,7 +33,6 @@
  * @var string $template_file The used template path.
  */
 
-var_dump($templates, $template_file);
 echo $before_widget;
   echo $display_title;
 

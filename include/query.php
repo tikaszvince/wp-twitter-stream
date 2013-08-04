@@ -105,7 +105,6 @@ class WP_Twitter_Stream_Query {
    */
   public function get_result($output = ARRAY_A) {
     $query = $this->to_string();
-    var_dump($this, $query);
     return WP_Twitter_Stream_Db::wpdb()->get_results($query, $output);
   }
 
