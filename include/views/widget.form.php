@@ -57,7 +57,7 @@
   </select>
 </p>
 
-<div class="wp-twitter-stream-hashtag-list<?php echo $instance['filter_mode'] == WP_Twitter_Stream_Widget::FILTER_MODE_ALL ? ' hidden' : ''; ?>">
+<div class="wp-twitter-stream-hashtag-list<?php echo $instance['filter_mode'] == WP_Twitter_Stream_Query::FILTER_MODE_ALL ? ' hidden' : ''; ?>">
   <p>
     <label for="<?php echo $this->get_field_id('hashtags'); ?>">
       <?php _e('Hastags:', WP_Twitter_Stream_Plugin::SLUG); ?>
