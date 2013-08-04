@@ -183,6 +183,16 @@ class WP_Twitter_Stream_Db {
   }
 
   /**
+   * Get full list of hashtags.
+   * @return array.
+   */
+  static public function get_hashtags() {
+    $table = self::$hashtags;
+    $query = "SELECT * FROM {$table} ORDER BY hashtag";
+    return self::wpdb()->get_results($query, OBJECT);
+  }
+
+  /**
    * Search hashtags by name
    *
    * @param array $hashtags
