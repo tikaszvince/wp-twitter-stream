@@ -116,6 +116,7 @@ class WP_Twitter_Stream_Parser {
         'parser_version' => $this->get_version(),
         'text' => $this->get_text(),
         'display' => $this->display(),
+        'additional' => join('\n', $this->get_additionals()),
         'raw_data' => json_encode($this->data),
       ),
       'hashtags' => $this->get_hashtags(),

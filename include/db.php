@@ -58,6 +58,7 @@ class WP_Twitter_Stream_Db {
     'parser_version' => '%s',
     'text' => '%s',
     'display' => '%s',
+    'additional' => '%s',
     'raw_data' => '%s',
   );
 
@@ -110,6 +111,7 @@ class WP_Twitter_Stream_Db {
         parser_version CHAR(10) NOT NULL,
         text TEXT NOT NULL,
         display TEXT NOT NULL,
+        additional TEXT NOT NULL,
         raw_data TEXT NOT NULL,
         PRIMARY KEY id (id),
         UNIQUE KEY twitter_id (twitter_id)
