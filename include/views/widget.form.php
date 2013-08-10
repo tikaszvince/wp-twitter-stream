@@ -113,3 +113,18 @@
     </select>
   </p>
 <?php endif; ?>
+
+<?php if (WP_Twitter_Stream_Plugin::is_debug_mode_enabled()) : ?>
+  <h3><?php _e('Development', WP_Twitter_Stream_Plugin::SLUG); ?></h3>
+  <p>
+    <label>
+      <?php $checked = $instance['dump_query'] ? ' checked="checked"' : ''; ?>
+      <input type="hidden" name="<?php echo $this->get_field_name('dump_query'); ?>" value="0" />
+      <input class="checkbox" type="checkbox"
+        name="<?php echo $this->get_field_name('dump_query'); ?>"
+        value="1"<?php echo $checked ?>
+        />
+      <?php _e('Print SQL query', WP_Twitter_Stream_Plugin::SLUG) ?>
+      </label>
+  </p>
+<?php endif; ?>

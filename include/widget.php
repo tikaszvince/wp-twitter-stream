@@ -44,6 +44,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     'title' => null,
     'filter_mode' => WP_Twitter_Stream_Query::FILTER_MODE_ALL,
     'hashtags' => array(),
+    'dump_query' => false,
   );
 
   /**
@@ -128,6 +129,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     }
 
     $instance['filter_mode'] = intval($instance['filter_mode']);
+    $instance['dump_query'] = (bool) $instance['dump_query'];
 
     return $instance;
   }
