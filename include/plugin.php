@@ -410,4 +410,12 @@ class WP_Twitter_Stream_Plugin {
     ;
   }
 
+  /**
+   * Get debug mode option value.
+   * @return bool
+   */
+  static public function is_debug_mode_enabled() {
+    $options = get_option(self::SLUG);
+    return intval(esc_attr($options['debug_mode'])) === 1;
+  }
 }
