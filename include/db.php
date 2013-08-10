@@ -339,12 +339,14 @@ class WP_Twitter_Stream_Db {
    *   Query settings contains the following keys:
    *   - count: (optional) The query limit. Default: 10.
    *
-   * @return mixed
+   * @return array
+   *   The return array contains to key
+   *   - result: the result of the query
+   *   - query: the WP_Twitter_Stream_Query object.
    */
   static public function get_tweets($instance) {
     $query = new WP_Twitter_Stream_Query();
     $query->set_limit($instance['count']);
-    $query->set_dump_query(isset($instance['dump_query']) ? $instance['dump_query'] : false);
     if (!empty($instance['hashtags'])) {
       $query->set_hashtag_ids($instance['hashtags'], $instance['filter_mode']);
     }
@@ -353,7 +355,10 @@ class WP_Twitter_Stream_Db {
     foreach ($result as $row) {
       self::$cache['get_tweet'][$row['id']] = $row;
     }
-    return $result;
+    return array(
+      'result' => $result,
+      'query' => $query,
+    );
   }
 
   /**
