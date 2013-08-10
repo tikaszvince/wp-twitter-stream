@@ -48,6 +48,12 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   );
 
   /**
+   * Current instance settings
+   * @var array
+   */
+  protected $instance_settings;
+
+  /**
    * WP_Widget constructor.
    */
   public function WP_Twitter_Stream_Widget() {
@@ -142,7 +148,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * @return void
    */
   public function form($instance) {
-    $instance = wp_parse_args(
+    $this->instance_settings = wp_parse_args(
       (array) $instance,
       $this->default_settings
     );
@@ -154,7 +160,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     );
     $hashtags = $this->get_hashtags();
     $widget = $this;
-    $template_candidates = $this->get_template_names($instance);
+    $template_candidates = $this->get_template_names($this->instance_settings);
     $templates = $this->get_templates($template_candidates);
 
     // Display the admin form
@@ -325,6 +331,21 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * @return array
    */
   protected function get_hashtags() {
-    return WP_Twitter_Stream_Db::get_hashtags();
+    $tags = WP_Twitter_Stream_Db::get_hashtags();
+    usort($tags, array($this, '_sort_tags'));
+    return $tags;
+  }
+
+  /**
+   * Compare function
+   * @link http://docs.php.net/usort
+   */
+  protected function _sort_tags($a, $b) {
+    $a_selected = in_array($a->id, $this->instance_settings['hashtags']);
+    $b_selected = in_array($b->id, $this->instance_settings['hashtags']);
+    if ($a_selected != $b_selected) {
+      return $a_selected && !$b_selected ? -1 : 1;
+    }
+    return strcmp($a->hashtag, $b->hashtag);
   }
 }
