@@ -51,7 +51,13 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * Current instance settings
    * @var array
    */
-  protected $instance_settings;
+  public $instance_settings;
+
+  /**
+   * Current instance args
+   * @var array
+   */
+  public $instance_args;
 
   /**
    * WP_Widget constructor.
@@ -86,20 +92,26 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * @param array $instance The current instance of the widget
    */
   public function widget($args, $instance) {
-    extract($args, EXTR_SKIP);
+    $this->instance_settings = wp_parse_args(
+      (array) $instance,
+      $this->default_settings
+    );
+    $this->instance_args = $args;
+
+    extract($this->instance_args, EXTR_SKIP);
 
     $this->reset();
-    $tweets = $this->get_tweets($instance);
-    $templates = $this->get_template_names($instance);
+    $tweets = $this->get_tweets();
+    $templates = $this->get_template_names();
 
     if (
-      $instance['template'] == 'auto'
+      $this->instance_settings['template'] == 'auto'
       || !$template_file = locate_template($templates)
     ) {
       $template_file = 'views/widget.php';
     }
     $widget = $this;
-    $display_title = $this->display_title($args, $instance);
+    $display_title = $this->display_title();
 
     require $template_file;
   }
@@ -160,7 +172,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     );
     $hashtags = $this->get_hashtags();
     $widget = $this;
-    $template_candidates = $this->get_template_names($this->instance_settings);
+    $template_candidates = $this->get_template_names();
     $templates = $this->get_templates($template_candidates);
 
     // Display the admin form
@@ -191,26 +203,26 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   /**
    * Get tweets to display
    *
-   * @param array $instance
-   *   Widget instance settings:
-   *
    * @return array
    *   List of tweets to display.
    *
    * @see WP_Twitter_Stream_Db::get_tweets()
    */
-  public function get_tweets($instance) {
+  public function get_tweets() {
     // Will read until tweet count reach the number the widget perform, but
     // we will try to fill the list only 3 times.
     $count = 10;
-    if (isset($instance['count']) && ($_count = intval($instance['count'])) > 0) {
+    if (
+      isset($this->instance_settings['count'])
+      && ($_count = intval($this->instance_settings['count'])) > 0
+    ) {
       $count = $_count;
     }
 
     $max_read = 3;
     do {
       $this->read_tries++;
-      $this->read_tweets($instance);
+      $this->read_tweets();
     } while ($this->read_tries < $max_read && $count > count($this->tweets));
 
     return $this->tweets;
@@ -227,13 +239,10 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   /**
    * Read tweets from DB.
    *
-   * @param array $instance
-   *   Widget settings.
-   *
    * @see WP_Twitter_Stream_Db::get_tweets()
    */
-  protected function read_tweets($instance) {
-    $results = WP_Twitter_Stream_Db::get_tweets($instance);
+  protected function read_tweets() {
+    $results = WP_Twitter_Stream_Db::get_tweets($this->instance_settings);
     foreach ($results as $row) {
       $tweet = new WP_Twitter_Stream_Tweet($row['id']);
       if ($tweet->is_deleted()) {
@@ -241,7 +250,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       }
       $this->tweets[] = $tweet;
 
-      if (count($this->tweets) >= $instance['count']) {
+      if (count($this->tweets) >= $this->instance_settings['count']) {
         break;
       }
     }
@@ -250,23 +259,25 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   /**
    * Get candidate template names.
    *
-      * @param array $instance The current instance of the widget
-   *
    * @return array
    *   The list of template names.
    */
-  protected function get_template_names($instance) {
+  protected function get_template_names() {
     $templates = array(
       'widget-twitter-stream.php',
       'widget-twitter-stream--number-' . $this->number. '.php',
     );
     $id = $this->number;
-    if (isset($instance['id']) && trim(esc_attr($instance['id']))) {
-      $id = trim(esc_attr($instance['id']));
+    if (isset($this->instance_settings['id']) && trim(esc_attr($this->instance_settings['id']))) {
+      $id = trim(esc_attr($this->instance_settings['id']));
     }
     $templates[] = 'widget-twitter-stream-' . $id . '.php';
-    if (isset($instance['template']) && $instance['template'] && $instance['template'] != 'auto') {
-      $templates[] = $instance['template'];
+    if (
+      isset($this->instance_settings['template'])
+      && $this->instance_settings['template']
+      && $this->instance_settings['template'] != 'auto'
+    ) {
+      $templates[] = $this->instance_settings['template'];
     }
     return array_reverse($templates);
   }
@@ -313,15 +324,12 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   /**
    * Render widget title.
    *
-   * @param array $args The array of form elements
-   * @param array $instance The current instance of the widget
-   *
    * @return string
    *   The rendered widget title.
    */
-  protected function display_title($args, $instance) {
-    if (isset($instance['title']) && $instance['title']) {
-      return $args['before_title'] . $instance['title'] . $args['after_title'];
+  protected function display_title() {
+    if (isset($this->instance_settings['title']) && $this->instance_settings['title']) {
+      return $this->instance_args['before_title'] . $this->instance_settings['title'] . $this->instance_args['after_title'];
     }
     return '';
   }

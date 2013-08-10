@@ -30,7 +30,7 @@
   <input class="widefat" type="text"
      id="<?php echo $this->get_field_id('title'); ?>"
      name="<?php echo $this->get_field_name('title'); ?>"
-     value="<?php echo esc_attr($instance['title']); ?>" />
+     value="<?php echo esc_attr($this->instance_settings['title']); ?>" />
 </p>
 
 <p>
@@ -40,7 +40,7 @@
   <input class="widefat" type="number"
      id="<?php echo $this->get_field_id('count'); ?>"
      name="<?php echo $this->get_field_name('count'); ?>"
-     value="<?php echo intval($instance['count']); ?>" />
+     value="<?php echo intval($this->instance_settings['count']); ?>" />
 </p>
 
 <p>
@@ -51,13 +51,13 @@
     id="<?php echo $this->get_field_id('filter_mode'); ?>"
     name="<?php echo $this->get_field_name('filter_mode'); ?>">
     <?php foreach ($filter_modes as $val => $label) : ?>
-      <?php $selected = $val == $instance['filter_mode'] ? ' selected="selected"' : ''; ?>
+      <?php $selected = $val == $this->instance_settings['filter_mode'] ? ' selected="selected"' : ''; ?>
       <?php echo '<option value="', $val, '"', $selected, '>', $label , '</option>'; ?>
     <?php endforeach; ?>
   </select>
 </p>
 
-<div class="wp-twitter-stream-hashtag-list<?php echo $instance['filter_mode'] == WP_Twitter_Stream_Query::FILTER_MODE_ALL ? ' hidden' : ''; ?>">
+<div class="wp-twitter-stream-hashtag-list<?php echo $this->instance_settings['filter_mode'] == WP_Twitter_Stream_Query::FILTER_MODE_ALL ? ' hidden' : ''; ?>">
   <p>
     <label for="<?php echo $this->get_field_id('hashtags'); ?>">
       <?php _e('Hastags:', WP_Twitter_Stream_Plugin::SLUG); ?>
@@ -65,7 +65,7 @@
   </p>
   <div class="hashtag-list">
     <?php foreach ($hashtags as $tag) : ?>
-      <?php $checked = in_array($tag->id, $instance['hashtags']) ? ' checked="checked"' : ''; ?>
+      <?php $checked = in_array($tag->id, $this->instance_settings['hashtags']) ? ' checked="checked"' : ''; ?>
       <label>
         <input class="checkbox" type="checkbox"
           name="<?php echo $this->get_field_name('hashtags'); ?>[]"
@@ -86,7 +86,7 @@
   <input class="widefat" type="text"
     id="<?php echo $this->get_field_id('id'); ?>"
     name="<?php echo $this->get_field_name('id'); ?>"
-    value="<?php echo esc_attr($instance['id']); ?>" />
+    value="<?php echo esc_attr($this->instance_settings['id']); ?>" />
 </p>
 
 <div class="description">
@@ -107,7 +107,7 @@
       id="<?php echo $this->get_field_id('template'); ?>"
       name="<?php echo $this->get_field_name('template'); ?>">
       <?php foreach ($templates as $file) : ?>
-        <?php $selected = $file == $instance['template'] ? ' selected="selected"' : ''; ?>
+        <?php $selected = $file == $this->instance_settings['template'] ? ' selected="selected"' : ''; ?>
         <?php echo '<option value="', $file, '"', $selected, '>', $file , '</option>'; ?>
       <?php endforeach; ?>
     </select>
@@ -118,7 +118,7 @@
   <h3><?php _e('Development', WP_Twitter_Stream_Plugin::SLUG); ?></h3>
   <p>
     <label>
-      <?php $checked = $instance['dump_query'] ? ' checked="checked"' : ''; ?>
+      <?php $checked = $this->instance_settings['dump_query'] ? ' checked="checked"' : ''; ?>
       <input type="hidden" name="<?php echo $this->get_field_name('dump_query'); ?>" value="0" />
       <input class="checkbox" type="checkbox"
         name="<?php echo $this->get_field_name('dump_query'); ?>"
