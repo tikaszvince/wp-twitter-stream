@@ -38,6 +38,7 @@ if (!defined('WPINC')) {
   die('Do not call this file directly');
 }
 
+require_once 'include/dump.php';
 require_once 'include/plugin.php';
 require_once 'include/db.php';
 require_once 'include/query.php';
