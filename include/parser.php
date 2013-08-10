@@ -82,7 +82,7 @@ class WP_Twitter_Stream_Parser {
    * @return string
    */
   static public function get_version() {
-    return WP_Twitter_Stream_Plugin::VERSION . ':1a';
+    return WP_Twitter_Stream_Plugin::VERSION . ':2';
   }
 
   /**
