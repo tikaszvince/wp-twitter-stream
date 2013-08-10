@@ -421,7 +421,8 @@ class WP_Twitter_Stream_Parser {
    * @return string
    */
   protected function url_link($url) {
-    return $this->_link($url->expanded_url, $url->display_url, 'link', $url->expanded_url);
+    $long_url = $this->get_long_url($url->expanded_url);
+    return $this->_link($long_url, $url->display_url, 'link', $url->expanded_url);
   }
 
   /**
