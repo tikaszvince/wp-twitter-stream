@@ -513,4 +513,24 @@ class WP_Twitter_Stream_Query {
     $this->add_condition('`tweets`.`last_checked` IS NULL', array(), 'include_deleted');
     return $this;
   }
+
+  /**
+   * Add condition to exclude local tweet ids from result.
+   * @param int|array $id
+   *   One or a list of local tweets ids.
+   * @return WP_Twitter_Stream_Query
+   */
+  public function exclude_id($id) {
+    if (
+      is_numeric($id)
+      || (is_array($id) && !empty($id))
+    ) {
+      if (!is_array($id)) {
+        $id = array($id);
+      }
+      $placeholders = join(', ', array_fill(0, count($id), '%d'));
+      $this->add_condition("`tweets`.`id` NOT IN ({$placeholders})", $id, 'exlude_id');
+    }
+    return $this;
+  }
 }
