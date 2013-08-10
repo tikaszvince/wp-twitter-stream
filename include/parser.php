@@ -422,6 +422,9 @@ class WP_Twitter_Stream_Parser {
    */
   protected function url_link($url) {
     $long_url = $this->get_long_url($url->expanded_url);
+    if ($embedded = $this->autoembed_linked_oembed($long_url)) {
+      $this->additional_content[] = $embedded;
+    }
     return $this->_link($long_url, $url->display_url, 'link', $url->expanded_url);
   }
 
@@ -529,5 +532,21 @@ class WP_Twitter_Stream_Parser {
     }
 
     return $before_replacement . $replacement . $after_replacement;
+  }
+
+  /**
+   * Try to embed content with oEmbed.
+   * @param String $long_url
+   * @return bool|string
+   */
+  protected function autoembed_linked_oembed($long_url) {
+    require_once ABSPATH . WPINC . '/class-oembed.php';
+    /** @var WP_oEmbed $wp_embed */
+    $wp_embed = _wp_oembed_get_object();
+    $embedded = $wp_embed->autoembed($long_url);
+    if ($embedded != $long_url) {
+      return $embedded;
+    }
+    return false;
   }
 }
