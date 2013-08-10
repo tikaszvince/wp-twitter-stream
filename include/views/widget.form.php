@@ -77,7 +77,7 @@
   </div>
 </div>
 
-<h3>Templates</h3>
+<h3><?php _e('Templates', WP_Twitter_Stream_Plugin::SLUG); ?></h3>
 
 <p>
   <label for="<?php echo $this->get_field_id('id'); ?>">
