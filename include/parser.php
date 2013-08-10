@@ -70,7 +70,7 @@ class WP_Twitter_Stream_Parser {
    * @return string
    */
   static public function get_version() {
-    return WP_Twitter_Stream_Plugin::VERSION . ':1';
+    return WP_Twitter_Stream_Plugin::VERSION . ':1a';
   }
 
   /**
@@ -348,7 +348,7 @@ class WP_Twitter_Stream_Parser {
     return $this->_link(
       'https://twitter.com/search?q=%23' . $hashtag->text . '&src=hash',
       '#' . $hashtag->text,
-      'hashtag'
+      'hashtag hashtag-' . $hashtag->text
     );
   }
 
