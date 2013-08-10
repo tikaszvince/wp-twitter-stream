@@ -309,7 +309,15 @@ class WP_Twitter_Stream_Parser {
    */
   protected function collect_media_entities() {
     foreach ($this->tweet->entities->media as $media) {
-      // TODO
+      switch ($media->type) {
+        case 'photo':
+          $this->replacements[] = array(
+            'search' => $media->url,
+            'replace' => $this->media_photo_link($media),
+            'indices' => $media->indices,
+          );
+          break;
+      }
     }
   }
 
@@ -414,6 +422,15 @@ class WP_Twitter_Stream_Parser {
    */
   protected function url_link($url) {
     return $this->_link($url->expanded_url, $url->display_url, 'link', $url->expanded_url);
+  }
+
+  /**
+   * Creates a media photo link for replacement.
+   * @param stdClass $media
+   * @return string
+   */
+  protected function media_photo_link($media) {
+    return $this->_link($media->expanded_url, $media->display_url, 'media photo', $media->expanded_url);
   }
 
   /**
