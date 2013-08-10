@@ -40,7 +40,7 @@ class WP_Twitter_Stream_Dump {
    * @param $var
    *   The variable we want to dump.
    */
-  protected function __construct($var) {
+  public function __construct($var) {
     $this->var = $var;
   }
 
