@@ -397,12 +397,19 @@ class WP_Twitter_Stream_Query {
    * @return string
    */
   public function __toString() {
-    $fields = $this->get_query_fields();
-    $table = $this->get_query_from();
-    $where = $this->get_query_where();
-    $order = $this->get_query_order();
+    $fields = trim($this->get_query_fields());
+    if ($this->distinct) {
+      $fields = "DISTINCT\n" .  preg_replace('%^%m', '  ', $fields);
+    }
+    $table = preg_replace('%^%m', '  ', trim($this->get_query_from()));
+    if ($where = trim($this->get_query_where())) {
+      $where = "WHERE\n" . preg_replace('%^%m', '  ', $where);
+    }
+    if ($order = trim($this->get_query_order())) {
+      $order = "ORDER BY\n" . preg_replace('%^%m', '  ', $order);
+    }
 
-    $sql = "SELECT\n{$fields}\nFROM\n{$table}\n{$where}\n{$order}\nLIMIT {$this->limit}";
+    $sql = "\nSELECT {$fields}\nFROM\n{$table}\n{$where}\n{$order}\nLIMIT {$this->limit}";
     return $sql;
   }
 
@@ -421,7 +428,7 @@ class WP_Twitter_Stream_Query {
         $_fields[] = $_field;
       }
     }
-    return ($this->distinct ? 'DISTINCT ' : '') . join(', ', $_fields);
+    return join(', ', $_fields);
   }
 
   /**
@@ -458,7 +465,7 @@ class WP_Twitter_Stream_Query {
     if (empty($_where)) {
       return '';
     }
-    return "\nWHERE\n" . join("AND \n", $_where);
+    return join("\nAND ", $_where);
   }
 
   /**
@@ -469,7 +476,7 @@ class WP_Twitter_Stream_Query {
     if (empty($this->orders)) {
       return '';
     }
-    return "ORDER BY\n" . join(",\n", $this->orders);
+    return join(",\n", $this->orders);
   }
 
   /**
