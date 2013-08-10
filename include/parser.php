@@ -41,6 +41,12 @@ class WP_Twitter_Stream_Parser {
   protected $text;
 
   /**
+   * The replaced version of the tweet.
+   * @var string
+   */
+  protected $replaced;
+
+  /**
    * Collection of entities.
    * @var array
    */
@@ -121,9 +127,37 @@ class WP_Twitter_Stream_Parser {
    * @return string
    */
   public function display() {
+    if ($this->replaced) {
+      return $this->replaced;
+    }
     $this->get_text();
     $this->collect_replacements();
-    return $this->replace();
+    return $this->replaced = $this->replace();
+  }
+
+  /**
+   * Get additional contents.
+   * @return array
+   */
+  public function get_additionals() {
+    $this->display();
+    return $this->additional_content;
+  }
+
+  /**
+   * Get tweet content.
+   * @return array
+   *   The return array has two key:
+   *   - display: the replaced content of the tweet. Every hashtag, link,
+   *     username mention replaced with proper link.
+   *     {@link|WP_Twitter_Stream_Parser::display()}
+   *   - additional: the additional embedded contents.
+   */
+  public function get_content() {
+    return array(
+      'display' => $this->display(),
+      'additional' => $this->additional_content,
+    );
   }
 
   /**
