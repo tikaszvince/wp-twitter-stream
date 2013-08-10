@@ -31,6 +31,7 @@
  * @var string $display_title
  * @var array $templates list of candidate template files.
  * @var string $template_file The used template path.
+ * @var string $debug_info Debug infos.
  */
 
 echo $before_widget;
@@ -46,4 +47,5 @@ echo $before_widget;
   }
   echo '</ol>';
 
+echo $debug_info;
 echo $after_widget;

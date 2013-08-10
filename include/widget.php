@@ -45,6 +45,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     'filter_mode' => WP_Twitter_Stream_Query::FILTER_MODE_ALL,
     'hashtags' => array(),
     'dump_query' => false,
+    'dump_settings' => false,
   );
 
   /**
@@ -118,6 +119,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     }
     $widget = $this;
     $display_title = $this->display_title();
+    $debug_info = $this->get_debug();
 
     require $template_file;
   }
@@ -154,6 +156,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
 
     $instance['filter_mode'] = intval($instance['filter_mode']);
     $instance['dump_query'] = (bool) $instance['dump_query'];
+    $instance['dump_settings'] = (bool) $instance['dump_settings'];
 
     return $instance;
   }
@@ -362,5 +365,32 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       return $a_selected && !$b_selected ? -1 : 1;
     }
     return strcmp($a->hashtag, $b->hashtag);
+  }
+
+  /**
+   * Get debug.
+   * @return bool|string
+   */
+  protected function get_debug() {
+    if (!WP_Twitter_Stream_Plugin::is_debug_mode_enabled()) {
+      return false;
+    }
+
+    $out = '';
+    if ($this->instance_settings['dump_settings']) {
+      $dump = new WP_Twitter_Stream_Dump($this->instance_settings);
+      $out .= '<pre style="text-align:left;">' . $dump->output() . "\n</pre>\n";
+    }
+
+    if ($this->instance_settings['dump_query']) {
+      $queries = array();
+      foreach ($this->queries as $query) {
+        $queries[] = (string) $query['query'];
+      }
+
+      $dump = new WP_Twitter_Stream_Dump($queries);
+      $out .= '<pre style="text-align:left;">' . $dump->output() . "\n</pre>\n";
+    }
+    return $out;
   }
 }
