@@ -13,7 +13,9 @@
 // and uninstalled, respectively.
 register_activation_hook(__FILE__, array('WP_Twitter_Stream_Plugin', 'activate'));
 register_deactivation_hook(__FILE__, array('WP_Twitter_Stream_Plugin', 'deactivate'));
-ini_set('display_errors', 1);
+if (WP_Twitter_Stream_Plugin::is_debug_mode_enabled()) {
+  ini_set('display_errors', 1);
+}
 
 /**
  * Plugin class.
