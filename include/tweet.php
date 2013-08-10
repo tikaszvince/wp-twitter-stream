@@ -99,15 +99,19 @@ class WP_Twitter_Stream_Tweet {
    * If the tweet is not exists returns NULL.
    * If this tweet was parsed with an older version re parse it.
    *
+   * @param bool $force_re_parsing
    * @return null|string
    */
-  public function display() {
+  public function display($force_re_parsing = false) {
     if ($this->is_deleted()) {
       return null;
     }
 
     $display = $this->row['display'];
-    if ($this->row['parser_version'] != WP_Twitter_Stream_Parser::get_version()) {
+    if (
+      $this->row['parser_version'] != WP_Twitter_Stream_Parser::get_version()
+      || $force_re_parsing
+    ) {
       $parser = new WP_Twitter_Stream_Parser($this->data);
       $display = $parser->display();
       WP_Twitter_Stream_Db::update_tweet_display($this->id, array(
