@@ -338,18 +338,23 @@ class WP_Twitter_Stream_Db {
    * @param array $instance
    *   Query settings contains the following keys:
    *   - count: (optional) The query limit. Default: 10.
+   * @param array $exclude_ids
+   *   list of local tweet ids to exclude.
    *
    * @return array
    *   The return array contains to key
    *   - result: the result of the query
    *   - query: the WP_Twitter_Stream_Query object.
    */
-  static public function get_tweets($instance) {
+  static public function get_tweets($instance, $exclude_ids = array()) {
     $query = new WP_Twitter_Stream_Query();
     $query->set_limit($instance['count']);
     $query->exclude_deleted();
     if (!empty($instance['hashtags'])) {
       $query->set_hashtag_ids($instance['hashtags'], $instance['filter_mode']);
+    }
+    if (!empty($exclude_ids)) {
+      $query->exclude_id($exclude_ids);
     }
 
     $result = $query->get_result();
