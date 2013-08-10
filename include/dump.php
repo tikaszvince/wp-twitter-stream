@@ -57,7 +57,7 @@ class WP_Twitter_Stream_Dump {
       ini_set('html_errors', $ini);
       return ob_get_clean();
     }
-    return $this->do_dump($this->var);
+    return '<pre style="text-align:left;">' . $this->do_dump($this->var) . "\n</pre>\n";
   }
 
   /**

@@ -112,7 +112,8 @@ class WP_Twitter_Stream_Query {
   public function get_result($output = ARRAY_A) {
     $query = $this->to_string();
     if ($this->dump_query) {
-      echo '<pre style="text-align:left;">', $query , "\n</pre>\n";
+      $dump = new WP_Twitter_Stream_Dump($query);
+      echo $dump->output();
     }
     return WP_Twitter_Stream_Db::wpdb()->get_results($query, $output);
   }

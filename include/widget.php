@@ -380,7 +380,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     $out = '';
     if ($this->instance_settings['dump_settings']) {
       $dump = new WP_Twitter_Stream_Dump($this->instance_settings);
-      $out .= '<pre style="text-align:left;">' . $dump->output() . "\n</pre>\n";
+      $out .= $dump->output();
     }
 
     if ($this->instance_settings['dump_query']) {
@@ -390,7 +390,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       }
 
       $dump = new WP_Twitter_Stream_Dump($queries);
-      $out .= '<pre style="text-align:left;">' . $dump->output() . "\n</pre>\n";
+      $out .= $dump->output();
     }
     return $out;
   }
