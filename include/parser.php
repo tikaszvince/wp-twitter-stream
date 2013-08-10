@@ -552,9 +552,8 @@ class WP_Twitter_Stream_Parser {
    * @return bool|string
    */
   protected function autoembed_linked_oembed($long_url) {
-    require_once ABSPATH . WPINC . '/class-oembed.php';
-    /** @var WP_oEmbed $wp_embed */
-    $wp_embed = _wp_oembed_get_object();
+    /** @var WP_Embed $wp_embed */
+    global $wp_embed;
     $embedded = $wp_embed->autoembed($long_url);
     if ($embedded != $long_url) {
       return $embedded;
