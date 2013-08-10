@@ -417,6 +417,13 @@ class WP_Twitter_Stream_Plugin {
    * @return bool
    */
   static public function is_debug_mode_enabled() {
+    global $current_user;
+    if (!$current_user) {
+      return false;
+    }
+    if (!current_user_can('administrator')) {
+      return false;
+    }
     $options = get_option(self::SLUG);
     return intval(esc_attr($options['debug_mode'])) === 1;
   }
