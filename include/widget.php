@@ -60,6 +60,12 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   public $instance_args;
 
   /**
+   * DB Queries
+   * @var array
+   */
+  protected $queries = array();
+
+  /**
    * WP_Widget constructor.
    */
   public function WP_Twitter_Stream_Widget() {
@@ -242,8 +248,9 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * @see WP_Twitter_Stream_Db::get_tweets()
    */
   protected function read_tweets() {
-    $results = WP_Twitter_Stream_Db::get_tweets($this->instance_settings);
-    foreach ($results as $row) {
+    $query = WP_Twitter_Stream_Db::get_tweets($this->instance_settings);
+    $this->queries[] = $query;
+    foreach ($query['result'] as $row) {
       $tweet = new WP_Twitter_Stream_Tweet($row['id']);
       if ($tweet->is_deleted()) {
         continue;
