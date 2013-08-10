@@ -347,6 +347,7 @@ class WP_Twitter_Stream_Db {
   static public function get_tweets($instance) {
     $query = new WP_Twitter_Stream_Query();
     $query->set_limit($instance['count']);
+    $query->exclude_deleted();
     if (!empty($instance['hashtags'])) {
       $query->set_hashtag_ids($instance['hashtags'], $instance['filter_mode']);
     }
