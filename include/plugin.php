@@ -66,6 +66,7 @@ class WP_Twitter_Stream_Plugin {
     'consumer_secret' => 'Consumer secret',
     'update_frequency' => 'Update frequency',
     'screen_name' => 'Users screen name',
+    'debug_mode' => 'Enable debug mode',
   );
 
   /** @var TwitterAPIExchange */
@@ -365,6 +366,13 @@ class WP_Twitter_Stream_Plugin {
   }
 
   /**
+   * Displays setting field for update_frequency.
+   */
+  public function _setting_debug_mode() {
+    $this->_setting__field_checkbox('debug_mode');
+  }
+
+  /**
    * Displays a setting field for option with given name.
    */
   public function _setting__field_input($option_name) {
@@ -388,4 +396,18 @@ class WP_Twitter_Stream_Plugin {
     }
     echo '</select>';
   }
+
+  /**
+   * Displays a checkbox field for option with given name.
+   */
+  public function _setting__field_checkbox($option_name) {
+    $options = get_option(self::SLUG);
+    $value = esc_attr($options[$option_name]);
+    $checked = intval($value) ? ' checked="checked"' : '';
+    echo
+      '<input type="hidden" name="', self::SLUG, '[', esc_attr($option_name), ']" value="0" />',
+      '<input type="checkbox" name="', self::SLUG, '[', esc_attr($option_name), ']" value="1"', $checked, '/>'
+    ;
+  }
+
 }
