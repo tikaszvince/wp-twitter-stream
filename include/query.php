@@ -77,6 +77,12 @@ class WP_Twitter_Stream_Query {
   protected $limit = 10;
 
   /**
+   * Print query.
+   * @var bool
+   */
+  protected $dump_query = false;
+
+  /**
    * Constructor.
    */
   public function __construct() {
@@ -105,6 +111,9 @@ class WP_Twitter_Stream_Query {
    */
   public function get_result($output = ARRAY_A) {
     $query = $this->to_string();
+    if ($this->dump_query) {
+      echo '<pre style="text-align:left;">', $query , "\n</pre>\n";
+    }
     return WP_Twitter_Stream_Db::wpdb()->get_results($query, $output);
   }
 
@@ -461,5 +470,18 @@ class WP_Twitter_Stream_Query {
       return '';
     }
     return "ORDER BY\n" . join(",\n", $this->orders);
+  }
+
+  /**
+   * Set print query flag.
+   *
+   * Setting this TRUE will cause any effect if debug mode is enabled.
+   *
+   * @param bool $dump_query
+   * @return WP_Twitter_Stream_Query
+   */
+  public function set_dump_query($dump_query) {
+    $this->dump_query = WP_Twitter_Stream_Plugin::is_debug_mode_enabled() && $dump_query;
+    return $this;
   }
 }
