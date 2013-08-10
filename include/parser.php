@@ -259,11 +259,15 @@ class WP_Twitter_Stream_Parser {
    */
   protected function collect_url_entities() {
     foreach ($this->tweet->entities->urls as $url) {
+      $url->long_url = $this->get_long_url($url->expanded_url);
       $this->replacements[] = array(
         'search' => $url->url,
         'replace' => $this->url_link($url),
         'indices' => $url->indices,
       );
+      if ($embedded = $this->autoembed_linked_oembed($url->long_url)) {
+        $this->additional_content[] = $embedded;
+      }
     }
   }
 
@@ -422,11 +426,7 @@ class WP_Twitter_Stream_Parser {
    * @return string
    */
   protected function url_link($url) {
-    $long_url = $this->get_long_url($url->expanded_url);
-    if ($embedded = $this->autoembed_linked_oembed($long_url)) {
-      $this->additional_content[] = $embedded;
-    }
-    return $this->_link($long_url, $url->display_url, 'link', $url->expanded_url);
+    return $this->_link($url->long_url, $url->display_url, 'link', $url->expanded_url);
   }
 
   /**
