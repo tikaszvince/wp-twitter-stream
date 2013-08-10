@@ -126,5 +126,15 @@
         />
       <?php _e('Print SQL query', WP_Twitter_Stream_Plugin::SLUG) ?>
       </label>
+    <br/>
+    <label>
+      <?php $checked = $this->instance_settings['dump_settings'] ? ' checked="checked"' : ''; ?>
+      <input type="hidden" name="<?php echo $this->get_field_name('dump_settings'); ?>" value="0" />
+      <input class="checkbox" type="checkbox"
+        name="<?php echo $this->get_field_name('dump_settings'); ?>"
+        value="1"<?php echo $checked ?>
+        />
+      <?php _e('Print Widget settings', WP_Twitter_Stream_Plugin::SLUG) ?>
+      </label>
   </p>
 <?php endif; ?>
