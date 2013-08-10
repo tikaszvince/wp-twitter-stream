@@ -46,6 +46,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     'hashtags' => array(),
     'dump_query' => false,
     'dump_settings' => false,
+    'force_re_parsing' => false,
   );
 
   /**

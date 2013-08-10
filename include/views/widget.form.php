@@ -136,5 +136,15 @@
         />
       <?php _e('Print Widget settings', WP_Twitter_Stream_Plugin::SLUG) ?>
       </label>
+    <br/>
+    <label>
+      <?php $checked = $this->instance_settings['force_re_parsing'] ? ' checked="checked"' : ''; ?>
+      <input type="hidden" name="<?php echo $this->get_field_name('force_re_parsing'); ?>" value="0" />
+      <input class="checkbox" type="checkbox"
+        name="<?php echo $this->get_field_name('force_re_parsing'); ?>"
+        value="1"<?php echo $checked ?>
+        />
+      <?php _e('Force re parsing tweet', WP_Twitter_Stream_Plugin::SLUG) ?>
+      </label>
   </p>
 <?php endif; ?>
