@@ -44,7 +44,7 @@ class WP_Twitter_Stream_Parser {
    * Collection of entities.
    * @var array
    */
-  protected $replacements;
+  protected $replacements = array();
 
   /**
    * List of hashtags
