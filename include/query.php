@@ -484,4 +484,33 @@ class WP_Twitter_Stream_Query {
     $this->dump_query = WP_Twitter_Stream_Plugin::is_debug_mode_enabled() && $dump_query;
     return $this;
   }
+
+  /**
+   * Add condition for exclude deleted tweets.
+   * @return WP_Twitter_Stream_Query
+   */
+  public function exclude_deleted()  {
+    unset($this->where['include_deleted']);
+    $this->add_condition('`tweets`.`last_checked` IS NOT NULL', array(), 'exclude_deleted');
+    return $this;
+  }
+
+  /**
+   * Add condition for include deleted tweets.
+   * @return WP_Twitter_Stream_Query
+   */
+  public function include_deleted()  {
+    unset($this->where['exclude_deleted']);
+    return $this;
+  }
+
+  /**
+   * Add condition for get only deleted tweets.
+   * @return WP_Twitter_Stream_Query
+   */
+  public function only_deleted() {
+    unset($this->where['exclude_deleted']);
+    $this->add_condition('`tweets`.`last_checked` IS NULL', array(), 'include_deleted');
+    return $this;
+  }
 }
