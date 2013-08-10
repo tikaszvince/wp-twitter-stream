@@ -49,6 +49,14 @@ class WP_Twitter_Stream_Dump {
    * @return string
    */
   public function output() {
+    if (function_exists('xdebug_var_dump')) {
+      $ini = ini_get('html_errors');
+      ini_set('html_errors', 1);
+      ob_start();
+      xdebug_var_dump($this->var);
+      ini_set('html_errors', $ini);
+      return ob_get_clean();
+    }
     return $this->do_dump($this->var);
   }
 
