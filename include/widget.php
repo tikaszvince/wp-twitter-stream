@@ -242,6 +242,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    */
   protected function reset() {
     $this->tweets = array();
+    $this->queries = array();
     $this->read_tries = 0;
   }
 
@@ -251,14 +252,14 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * @see WP_Twitter_Stream_Db::get_tweets()
    */
   protected function read_tweets() {
-    $query = WP_Twitter_Stream_Db::get_tweets($this->instance_settings);
+    $query = WP_Twitter_Stream_Db::get_tweets($this->instance_settings, array_keys($this->tweets));
     $this->queries[] = $query;
     foreach ($query['result'] as $row) {
       $tweet = new WP_Twitter_Stream_Tweet($row['id']);
       if ($tweet->is_deleted()) {
         continue;
       }
-      $this->tweets[] = $tweet;
+      $this->tweets[$row['id']] = $tweet;
 
       if (count($this->tweets) >= $this->instance_settings['count']) {
         break;
