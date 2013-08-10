@@ -350,6 +350,43 @@ class WP_Twitter_Stream_Parser {
   }
 
   /**
+   * Check the url is a shortened url.
+   * @param string $url
+   * @return bool
+   */
+  protected function url_is_shortened($url) {
+    $services = array(
+      'bit.ly',
+      't.co',
+      'on.fb.me',
+      'youtu.be',
+      'tmblr.co',
+    );
+    return (bool) preg_match('%^https?://(' . join('|', $services) . ')%', $url);
+  }
+
+  /**
+   * Get the real URL of shortened link.
+   *
+   * @param string $url
+   * @return string
+   */
+  protected function get_long_url($url) {
+    if (!$this->url_is_shortened($url)) {
+      return $url;
+    }
+
+    $headers = get_headers($url);
+    $headers = array_reverse($headers);
+    foreach($headers as $header) {
+      if (stripos($header, 'Location: ') === 0) {
+        return preg_replace('%Location: %i', '', $header);
+      }
+    }
+    return $url;
+  }
+
+  /**
    * Creates a link
    *
    * @param string $url
