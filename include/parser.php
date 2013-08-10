@@ -53,6 +53,12 @@ class WP_Twitter_Stream_Parser {
   protected $hashtags;
 
   /**
+   * Collection of additional contents, photo, video, etc.
+   * @var array
+   */
+  protected $additional_content = array();
+
+  /**
    * Original tweet data.
    * @param stdClass $tweet
    */
