@@ -316,6 +316,7 @@ class WP_Twitter_Stream_Parser {
             'replace' => $this->media_photo_link($media),
             'indices' => $media->indices,
           );
+          $this->additional_content[] = $this->media_photo_additional($media);
           break;
       }
     }
@@ -532,6 +533,16 @@ class WP_Twitter_Stream_Parser {
     }
 
     return $before_replacement . $replacement . $after_replacement;
+  }
+
+  /**
+   * Embed photo media.
+   * @param stdClass $media
+   * @return string
+   */
+  protected function media_photo_additional($media) {
+    $src = preg_replace('%https?://%', '//', $media->media_url);
+    return '<img class="additional additional-media additional-photo" src="' . $src . '" />';
   }
 
   /**
