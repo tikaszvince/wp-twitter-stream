@@ -395,4 +395,16 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     }
     return $out;
   }
+
+  /**
+   * Get force re-parsing flag.
+   * @return bool
+   */
+  public function get_force_re_parsing() {
+    if (!WP_Twitter_Stream_Plugin::is_debug_mode_enabled()) {
+      return false;
+    }
+
+    return $this->instance_settings['force_re_parsing'];
+  }
 }

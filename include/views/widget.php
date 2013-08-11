@@ -42,7 +42,7 @@ echo $before_widget;
     /** @var WP_Twitter_Stream_Tweet $tweet */
     echo
       '<li>',
-        $tweet->display($this->instance_settings['force_re_parsing']),
+        $tweet->display($this->get_force_re_parsing()),
       '</li>';
   }
   echo '</ol>';
