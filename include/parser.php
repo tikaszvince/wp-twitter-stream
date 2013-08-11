@@ -274,7 +274,7 @@ class WP_Twitter_Stream_Parser {
         'indices' => $url->indices,
       );
       if ($embedded = $this->autoembed_linked_oembed($url->long_url)) {
-        $this->additional_content[] = $embedded;
+        $this->add_additional_content($embedded, true);
       }
     }
   }
@@ -328,7 +328,7 @@ class WP_Twitter_Stream_Parser {
             'replace' => $this->media_photo_link($media),
             'indices' => $media->indices,
           );
-          $this->additional_content[] = $this->media_photo_additional($media);
+          $this->add_additional_content($this->media_photo_additional($media), true);
           break;
       }
     }
@@ -566,5 +566,19 @@ class WP_Twitter_Stream_Parser {
       return $embedded;
     }
     return false;
+  }
+
+  /**
+   * Add additional content
+   * @param string $content
+   * @param bool $media
+   * @return WP_Twitter_Stream_Parser
+   */
+  protected function add_additional_content($content, $media = false) {
+    $this->additional_content[] = $content;
+    if ($media) {
+      $this->has_media = true;
+    }
+    return $this;
   }
 }
