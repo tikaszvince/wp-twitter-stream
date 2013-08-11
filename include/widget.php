@@ -51,6 +51,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     'dump_query' => false,
     'dump_settings' => false,
     'dump_templates' => false,
+    'dump_tweet_objects' => 0,
   );
 
   /**
@@ -170,6 +171,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     $instance['dump_query'] = (bool) $instance['dump_query'];
     $instance['dump_settings'] = (bool) $instance['dump_settings'];
     $instance['dump_templates'] = (bool) $instance['dump_templates'];
+    $instance['dump_tweet_objects'] = intval($instance['dump_tweet_objects']);
 
     return $instance;
   }

@@ -187,6 +187,19 @@
         />
       <?php _e('Print template candidates', WP_Twitter_Stream_Plugin::SLUG) ?>
       </label>
+  </p>
 
+  <p>
+    <label for="<?php echo $this->get_field_id('dump_tweet_objects'); ?>">
+      <?php _e('Dump tweet data:', WP_Twitter_Stream_Plugin::SLUG); ?>
+    </label>
+    <select class="widefat wp-twitter-stream-media-filter-mode"
+      id="<?php echo $this->get_field_id('dump_tweet_objects'); ?>"
+      name="<?php echo $this->get_field_name('dump_tweet_objects'); ?>">
+      <?php foreach ($tweet_dump_modes as $val => $label) : ?>
+        <?php $selected = $val == $this->instance_settings['media_filter'] ? ' selected="selected"' : ''; ?>
+        <?php echo '<option value="', $val, '"', $selected, '>', $label , '</option>'; ?>
+      <?php endforeach; ?>
+    </select>
   </p>
 <?php endif; ?>
