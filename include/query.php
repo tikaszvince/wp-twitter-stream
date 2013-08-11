@@ -574,4 +574,37 @@ class WP_Twitter_Stream_Query {
     }
     return $this;
   }
+
+  /**
+   * Add condition to filter tweets by media.
+   * @param $media_filter
+   * @return $this
+   */
+  public function media_filter_condition($media_filter = null) {
+    if (isset($media_filter)) {
+      $this->set_media_filter($media_filter);
+    }
+    switch ($this->get_media_filter()) {
+      case self::FILTER_MEDIA_EXCLUDE_WITH_MEDIA:
+        unset($this->where['media_filter_include']);
+        if (!isset($this->where['media_filter_exclude'])) {
+          $this->add_condition('`tweet`.`has_media` <> 1', array(), 'media_filter_exclude');
+        }
+        break;
+
+      case self::FILTER_MEDIA_ONLY_WITH_MEDIA:
+        unset($this->where['media_filter_exclude']);
+        if (!isset($this->where['media_filter_include'])) {
+          $this->add_condition('`tweet`.`has_media` = 1', array(), 'media_filter_include');
+        }
+        break;
+
+      case self::FILTER_MEDIA_DO_NOT_FILTER:
+      default:
+        unset($this->where['media_filter_include']);
+        unset($this->where['media_filter_exclude']);
+        break;
+    }
+    return $this;
+  }
 }
