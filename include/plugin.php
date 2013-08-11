@@ -126,7 +126,7 @@ class WP_Twitter_Stream_Plugin {
     if (isset($this->api)) {
       return $this->api;
     }
-    require_once dirname(__FILE__) . '/../twitter-api-php/TwitterAPIExchange.php';
+    require_once dirname(__FILE__) . '/../libs/twitter-api-php/TwitterAPIExchange.php';
     return $this->api = new TwitterAPIExchange($this->get_api_options());
   }
 
