@@ -43,6 +43,22 @@
      value="<?php echo intval($this->instance_settings['count']); ?>" />
 </p>
 
+<h3><?php _e('Filter tweets', WP_Twitter_Stream_Plugin::SLUG); ?></h3>
+
+<p>
+  <label for="<?php echo $this->get_field_id('media_filter'); ?>">
+    <?php _e('Media filter mode:', WP_Twitter_Stream_Plugin::SLUG); ?>
+  </label>
+  <select class="widefat wp-twitter-stream-media-filter-mode"
+    id="<?php echo $this->get_field_id('media_filter'); ?>"
+    name="<?php echo $this->get_field_name('media_filter'); ?>">
+    <?php foreach ($media_filter_modes as $val => $label) : ?>
+      <?php $selected = $val == $this->instance_settings['media_filter'] ? ' selected="selected"' : ''; ?>
+      <?php echo '<option value="', $val, '"', $selected, '>', $label , '</option>'; ?>
+    <?php endforeach; ?>
+  </select>
+</p>
+
 <p>
   <label for="<?php echo $this->get_field_id('filter_mode'); ?>">
     <?php _e('Hastag filter mode:', WP_Twitter_Stream_Plugin::SLUG); ?>

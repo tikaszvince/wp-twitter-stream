@@ -47,6 +47,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     'dump_query' => false,
     'dump_settings' => false,
     'force_re_parsing' => false,
+    'media_filter' => WP_Twitter_Stream_Query::FILTER_MEDIA_DO_NOT_FILTER,
   );
 
   /**
@@ -179,6 +180,11 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       WP_Twitter_Stream_Query::FILTER_MODE_ALL => __('Show All', WP_Twitter_Stream_Plugin::SLUG),
       WP_Twitter_Stream_Query::FILTER_MODE_INCLUDE => __('Show tweets with hastags', WP_Twitter_Stream_Plugin::SLUG),
       WP_Twitter_Stream_Query::FILTER_MODE_EXCLUDE => __('Hide tweets with hastags', WP_Twitter_Stream_Plugin::SLUG),
+    );
+    $media_filter_modes = array(
+      WP_Twitter_Stream_Query::FILTER_MEDIA_DO_NOT_FILTER => __('Do not filter by media', WP_Twitter_Stream_Plugin::SLUG),
+      WP_Twitter_Stream_Query::FILTER_MEDIA_ONLY_WITH_MEDIA => __('Show tweets only with media', WP_Twitter_Stream_Plugin::SLUG),
+      WP_Twitter_Stream_Query::FILTER_MEDIA_EXCLUDE_WITH_MEDIA => __('Hide tweets with media', WP_Twitter_Stream_Plugin::SLUG),
     );
     $hashtags = $this->get_hashtags();
     $widget = $this;
