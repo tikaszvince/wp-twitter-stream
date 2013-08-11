@@ -199,17 +199,23 @@ class WP_Twitter_Stream_Query {
       && in_array($filter_mode, array(self::FILTER_MODE_EXCLUDE, self::FILTER_MODE_INCLUDE))
     ) {
       $connect = WP_Twitter_Stream_Db::$tw2ht;
-      $this->distinct = true;
       $placeholders = join(', ', array_fill(0, count($this->hashtag_ids), '%d'));
 
       $this->left_join('ht', $connect, '`tweets`.`id` = `ht`.`tid`');
+      $this->add_group_by('`tweets`.`id`', 0);
+
+      $condition_name = 'hashtags';
       if ($this->filter_mode == self::FILTER_MODE_INCLUDE) {
         $condition = "`ht`.`hid` IN ({$placeholders})";
+        $this->add_condition($condition, $this->hashtag_ids, $condition_name);
+        unset($this->having[$condition_name]);
       }
       else {
+        $this->add_fields('ht', 'hid');
         $condition = "`ht`.`hid` IS NULL OR `ht`.`hid` NOT IN ({$placeholders})";
+        unset($this->where[$condition_name]);
+        $this->add_having_condition($condition, $this->hashtag_ids, $condition_name);
       }
-      $this->add_condition($condition, $this->hashtag_ids, 'hashtags');
     }
     return $this;
   }
