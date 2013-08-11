@@ -427,9 +427,9 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
 
     if ($this->instance_settings['dump_templates']) {
       $used_template = '<b>' . $this->get_template_to_use() . '</b>';
-      if ($used_template == 'views/widget.php') {
+      if ($this->get_template_to_use() == 'views/widget.php') {
         $used_template .=
-          '<small><em>' .
+          ' <small><em>' .
             __('default template deliverd by plugin', WP_Twitter_Stream_Plugin::SLUG) .
           '</em></small>';
       }
