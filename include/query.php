@@ -68,6 +68,12 @@ class WP_Twitter_Stream_Query {
   protected $where = array();
 
   /**
+   * Having clauses
+   * @var array
+   */
+  protected $having = array();
+
+  /**
    * Group by
    * @var array
    */
@@ -384,6 +390,32 @@ class WP_Twitter_Stream_Query {
   }
 
   /**
+   * Adds a new having condition.
+   *
+   * @see wpdb::prepare()
+   *
+   * @param string $condition
+   *   Query statement with sprintf()-like placeholders
+   * @param array $args
+   *   The array of variables to substitute into the query's placeholders if
+   *   being called like {@link http://php.net/vsprintf vsprintf()}
+   * @param string $name
+   *   (optional) the condition name.
+   *
+   * @return WP_Twitter_Stream_Query
+   */
+  public function add_having_condition($condition, $args = null, $name = null) {
+    $having = WP_Twitter_Stream_Db::wpdb()->prepare($condition, $args);
+    if (isset($name) && $name) {
+      $this->having[$name] = $having;
+    }
+    else {
+      $this->having[] = $having;
+    }
+    return $this;
+  }
+
+  /**
    * Add new ordering logic.
    *
    * @param string $order_by
@@ -482,11 +514,14 @@ class WP_Twitter_Stream_Query {
     if ($group_by = trim($this->get_query_group_by())) {
       $group_by = "GROUP BY\n" . preg_replace('%^%m', '  ', $group_by);
     }
+    if ($having = trim($this->get_query_having())) {
+      $having = "HAVING\n" . preg_replace('%^%m', '  ', $having);
+    }
     if ($order = trim($this->get_query_order())) {
       $order = "ORDER BY\n" . preg_replace('%^%m', '  ', $order);
     }
 
-    $sql = "\nSELECT {$fields}\nFROM\n{$table}\n{$where}\n{$group_by}\n{$order}\nLIMIT {$this->limit}";
+    $sql = "\nSELECT {$fields}\nFROM\n{$table}\n{$where}\n{$group_by}\n{$having}\n{$order}\nLIMIT {$this->limit}";
     return preg_replace("%\n+%", "\n", $sql);
   }
 
@@ -543,6 +578,21 @@ class WP_Twitter_Stream_Query {
       return '';
     }
     return join("\nAND ", $_where);
+  }
+
+  /**
+   * Get SELECT SQL HAVING clause.
+   * @return string
+   */
+  protected function get_query_having() {
+    $_having = array();
+    foreach ($this->having as $condition) {
+      $_having[] = "({$condition})";
+    }
+    if (empty($_having)) {
+      return '';
+    }
+    return join("\nAND ", $_having);
   }
 
   /**
