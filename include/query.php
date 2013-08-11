@@ -227,7 +227,7 @@ class WP_Twitter_Stream_Query {
    */
   public function set_limit($limit) {
     if (intval($limit) > 0) {
-      $this->limit = $limit;
+      $this->limit = intval($limit);
     }
     return $this;
   }
@@ -536,8 +536,8 @@ class WP_Twitter_Stream_Query {
     }
 
     // Limit the size of result set.
-    if ($limit = intval($this->limit) > 0) {
-      $sql[] = 'LIMIT ' . $limit;
+    if ($this->limit > 0) {
+      $sql[] = 'LIMIT ' . $this->limit;
     }
 
     // Beautify the query.
