@@ -361,6 +361,7 @@ class WP_Twitter_Stream_Db {
     if (!empty($exclude_ids)) {
       $query->exclude_id($exclude_ids);
     }
+    $query->media_filter_condition($instance['media_filter']);
 
     $result = $query->get_result();
     foreach ($result as $row) {
