@@ -23,7 +23,7 @@ class WP_Twitter_Stream_Db {
   /**
    * DB version
    */
-  const VERSION = '1.0.0:13';
+  const VERSION = '1.0.0:14';
 
   /**
    * Prefixed name of the tweets table.
@@ -53,6 +53,7 @@ class WP_Twitter_Stream_Db {
     'last_checked' => '%s',
     'rt' => '%d',
     'reply' => '%d',
+    'has_media' => '%d',
     'author_id' => '%d',
     'author' => '%s',
     'parser_version' => '%s',
@@ -106,6 +107,7 @@ class WP_Twitter_Stream_Db {
         last_checked datetime,
         rt TINYINT(1) DEFAULT 0 NOT NULL,
         reply TINYINT(1) DEFAULT 0 NOT NULL,
+        has_media TINYINT(1) DEFAULT 0 NOT NULL,
         author_id BIGINT NOT NULL,
         author CHAR(100) NOT NULL,
         parser_version CHAR(10) NOT NULL,
