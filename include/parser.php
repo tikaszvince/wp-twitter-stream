@@ -183,14 +183,22 @@ class WP_Twitter_Stream_Parser {
    * Checks is tweet a reply to an other.
    * @return bool
    */
-  protected function is_reply() {
-    return (
+  public function is_reply() {
+    $data = (
       $this->data->in_reply_to_status_id
       || $this->data->in_reply_to_status_id_str
       || $this->data->in_reply_to_user_id
       || $this->data->in_reply_to_user_id_str
       || $this->data->in_reply_to_screen_name
     );
+    $tweet = (
+      $this->tweet->in_reply_to_status_id
+      || $this->tweet->in_reply_to_status_id_str
+      || $this->tweet->in_reply_to_user_id
+      || $this->tweet->in_reply_to_user_id_str
+      || $this->tweet->in_reply_to_screen_name
+    );
+    return $data || $tweet;
   }
 
   /**
