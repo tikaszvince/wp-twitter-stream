@@ -459,11 +459,7 @@ class WP_Twitter_Stream_Query {
    * @return WP_Twitter_Stream_Query
    */
   public function add_group_by($group_by, $weight = 10) {
-    $weight = intval($weight);
-    if (!isset($this->group_by[$weight])) {
-      $this->group_by[$weight] = array();
-    }
-    $this->group_by[$weight][] = $group_by;
+    $this->group_by[intval($weight) . '#' . $group_by] = $group_by;
     return $this;
   }
 
@@ -631,17 +627,7 @@ class WP_Twitter_Stream_Query {
       return '';
     }
 
-    $_group_by = array();
-    ksort($this->group_by);
-    foreach ($this->group_by as $weight => $groups) {
-      foreach ($groups as $group_by) {
-        $_group_by[] = $group_by;
-      }
-    }
-    if (empty($_group_by)) {
-      return '';
-    }
-    return join(",\n", $_group_by);
+    return join(",\n", $this->group_by);
   }
 
   /**
