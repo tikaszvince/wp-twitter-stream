@@ -44,11 +44,13 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     'title' => null,
     'filter_mode' => WP_Twitter_Stream_Query::FILTER_MODE_ALL,
     'hashtags' => array(),
-    'dump_query' => false,
-    'dump_settings' => false,
     'force_re_parsing' => false,
     'media_filter' => WP_Twitter_Stream_Query::FILTER_MEDIA_DO_NOT_FILTER,
     'hide_replies' => true,
+
+    'dump_query' => false,
+    'dump_settings' => false,
+    'dump_templates' => false,
   );
 
   /**
@@ -155,8 +157,10 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     $instance['filter_mode'] = intval($instance['filter_mode']);
     $instance['media_filter'] = intval($instance['media_filter']);
     $instance['hide_replies'] = (bool) $instance['hide_replies'];
+
     $instance['dump_query'] = (bool) $instance['dump_query'];
     $instance['dump_settings'] = (bool) $instance['dump_settings'];
+    $instance['dump_templates'] = (bool) $instance['dump_templates'];
 
     return $instance;
   }

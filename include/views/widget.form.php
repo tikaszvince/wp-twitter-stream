@@ -146,6 +146,17 @@
   <h3><?php _e('Development', WP_Twitter_Stream_Plugin::SLUG); ?></h3>
   <p>
     <label>
+      <?php $checked = $this->instance_settings['force_re_parsing'] ? ' checked="checked"' : ''; ?>
+      <input type="hidden" name="<?php echo $this->get_field_name('force_re_parsing'); ?>" value="0" />
+      <input class="checkbox" type="checkbox"
+        name="<?php echo $this->get_field_name('force_re_parsing'); ?>"
+        value="1"<?php echo $checked ?>
+        />
+      <?php _e('Force re parsing tweet', WP_Twitter_Stream_Plugin::SLUG) ?>
+    </label>
+
+    <br/>
+    <label>
       <?php $checked = $this->instance_settings['dump_query'] ? ' checked="checked"' : ''; ?>
       <input type="hidden" name="<?php echo $this->get_field_name('dump_query'); ?>" value="0" />
       <input class="checkbox" type="checkbox"
@@ -154,6 +165,7 @@
         />
       <?php _e('Print SQL query', WP_Twitter_Stream_Plugin::SLUG) ?>
       </label>
+
     <br/>
     <label>
       <?php $checked = $this->instance_settings['dump_settings'] ? ' checked="checked"' : ''; ?>
@@ -164,15 +176,17 @@
         />
       <?php _e('Print Widget settings', WP_Twitter_Stream_Plugin::SLUG) ?>
       </label>
+
     <br/>
     <label>
-      <?php $checked = $this->instance_settings['force_re_parsing'] ? ' checked="checked"' : ''; ?>
-      <input type="hidden" name="<?php echo $this->get_field_name('force_re_parsing'); ?>" value="0" />
+      <?php $checked = $this->instance_settings['dump_templates'] ? ' checked="checked"' : ''; ?>
+      <input type="hidden" name="<?php echo $this->get_field_name('dump_templates'); ?>" value="0" />
       <input class="checkbox" type="checkbox"
-        name="<?php echo $this->get_field_name('force_re_parsing'); ?>"
+        name="<?php echo $this->get_field_name('dump_templates'); ?>"
         value="1"<?php echo $checked ?>
         />
-      <?php _e('Force re parsing tweet', WP_Twitter_Stream_Plugin::SLUG) ?>
+      <?php _e('Print template candidates', WP_Twitter_Stream_Plugin::SLUG) ?>
       </label>
+
   </p>
 <?php endif; ?>
