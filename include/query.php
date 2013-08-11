@@ -24,6 +24,9 @@ class WP_Twitter_Stream_Query {
   const FILTER_MODE_ALL = 0;
   const FILTER_MODE_EXCLUDE = 1;
   const FILTER_MODE_INCLUDE = 2;
+  const FILTER_MEDIA_DO_NOT_FILTER = 0;
+  const FILTER_MEDIA_ONLY_WITH_MEDIA = 1;
+  const FILTER_MEDIA_EXCLUDE_WITH_MEDIA = 2;
 
   /**
    * Filter mode
@@ -31,6 +34,13 @@ class WP_Twitter_Stream_Query {
    * @var int
    */
   protected $filter_mode = 0;
+
+  /**
+   * Media filter mode
+   * Available values the constants defined by this class.
+   * @var int
+   */
+  protected $media_filter = self::FILTER_MEDIA_DO_NOT_FILTER;
 
   /**
    * Fields to query
@@ -138,6 +148,29 @@ class WP_Twitter_Stream_Query {
    * @return int
    */
   public function get_filter_mode() {
+    return $this->filter_mode;
+  }
+
+  /**
+   * @param int $media_filter
+   * @return WP_Twitter_Stream_Query
+   */
+  public function set_media_filter($media_filter) {
+    $enabled = array(
+      self::FILTER_MEDIA_DO_NOT_FILTER,
+      self::FILTER_MEDIA_ONLY_WITH_MEDIA,
+      self::FILTER_MEDIA_EXCLUDE_WITH_MEDIA,
+    );
+    if (in_array($media_filter, $enabled)) {
+      $this->media_filter = $media_filter;
+    }
+    return $this;
+  }
+
+  /**
+   * @return int
+   */
+  public function get_media_filter() {
     return $this->filter_mode;
   }
 
