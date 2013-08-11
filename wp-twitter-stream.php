@@ -45,6 +45,7 @@ require_once 'include/query.php';
 require_once 'include/install.php';
 require_once 'include/tweet.php';
 require_once 'include/widget.php';
+require_once 'include/widget_debug.php';
 require_once 'include/cron.php';
 require_once 'include/parser.php';
 

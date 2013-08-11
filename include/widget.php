@@ -119,7 +119,9 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
 
     $widget = $this;
     $display_title = $this->display_title();
-    $debug_info = $this->get_debug();
+
+    $debug = new WP_Twitter_Stream_Widget_Debug($this);
+    $debug_info = $debug->get_debug();
 
     require $template_file;
   }
@@ -189,6 +191,12 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       WP_Twitter_Stream_Query::FILTER_MEDIA_ONLY_WITH_MEDIA => __('Show tweets only with media', WP_Twitter_Stream_Plugin::SLUG),
       WP_Twitter_Stream_Query::FILTER_MEDIA_EXCLUDE_WITH_MEDIA => __('Hide tweets with media', WP_Twitter_Stream_Plugin::SLUG),
     );
+    $tweet_dump_modes = array(
+      WP_Twitter_Stream_Widget_Debug::DUMP_TWEET_DISABLE => __('Do not dump tweets', WP_Twitter_Stream_Plugin::SLUG),
+      WP_Twitter_Stream_Widget_Debug::DUMP_TWEET_OBJECT => __('Dump tweet objects', WP_Twitter_Stream_Plugin::SLUG),
+      WP_Twitter_Stream_Widget_Debug::DUMP_TWEET_RAW_DATA => __('Dump raw tweet data', WP_Twitter_Stream_Plugin::SLUG),
+    );
+
     $hashtags = $this->get_hashtags();
     $widget = $this;
     $template_candidates = $this->get_template_names();
@@ -283,7 +291,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * @return array
    *   The list of template names.
    */
-  protected function get_template_names() {
+  public function get_template_names() {
     $templates = array(
       'widget-twitter-stream.php',
       'widget-twitter-stream--number-' . $this->number. '.php',
@@ -307,7 +315,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * Get path to template file to use for widget.
    * @return string
    */
-  protected function get_template_to_use() {
+  public function get_template_to_use() {
     $templates = $this->get_template_names();
     if (
       $this->instance_settings['template'] == 'auto'
@@ -394,69 +402,6 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   }
 
   /**
-   * Get debug.
-   * @return bool|string
-   */
-  protected function get_debug() {
-    if (!WP_Twitter_Stream_Plugin::is_debug_mode_enabled()) {
-      return false;
-    }
-
-    $out = '';
-    if ($this->instance_settings['dump_settings']) {
-      $dump = new WP_Twitter_Stream_Dump($this->instance_settings);
-      $out .=
-        '<section class="instance">' .
-          '<h4>' . __('Instance settings', WP_Twitter_Stream_Plugin::SLUG) . '</h4>' .
-          $dump->output() .
-        '</section>';
-    }
-
-    if ($this->instance_settings['dump_query']) {
-      $queries = array();
-      foreach ($this->queries as $query) {
-        $queries[] = (string) $query['query'];
-      }
-
-      $dump = new WP_Twitter_Stream_Dump($queries);
-      $out .=
-        '<section class="query">' .
-          '<h4>' . __('Query', WP_Twitter_Stream_Plugin::SLUG) . '</h4>' .
-          $dump->output() .
-        '</section>';
-    }
-
-    if ($this->instance_settings['dump_templates']) {
-      $used_template = '<b>' . $this->get_template_to_use() . '</b>';
-      if ($this->get_template_to_use() == 'views/widget.php') {
-        $used_template .=
-          ' <small><em>' .
-            __('default template deliverd by plugin', WP_Twitter_Stream_Plugin::SLUG) .
-          '</em></small>';
-      }
-
-      $dump = new WP_Twitter_Stream_Dump($this->get_template_names());
-      $out .=
-        '<section class="templates">' .
-          '<h4>' . __('Template candidates', WP_Twitter_Stream_Plugin::SLUG) . '</h4>' .
-          $dump->output() .
-          '<h4>' . __('Used template', WP_Twitter_Stream_Plugin::SLUG) . '</h4> ' .
-          $used_template .
-        '</section>';
-
-    }
-
-    if ($out) {
-      $out =
-        '<footer class="debug">' .
-          '<h3>' . __('Debug', WP_Twitter_Stream_Plugin::SLUG) . '</h3>' .
-          $out .
-        '</footer>';
-    }
-    return $out;
-  }
-
-  /**
    * Get force re-parsing flag.
    * @return bool
    */
@@ -466,5 +411,21 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     }
 
     return $this->instance_settings['force_re_parsing'];
+  }
+
+  /**
+   * Get current instance settings
+   * @return array
+   */
+  public function get_instance_settings() {
+    return $this->instance_settings;
+  }
+
+  /**
+   * Get queries for tweets.
+   * @return array
+   */
+  public function get_queries() {
+    return $this->queries;
   }
 }
