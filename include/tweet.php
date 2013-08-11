@@ -46,7 +46,7 @@ class WP_Twitter_Stream_Tweet {
     if (isset($id)) {
       $this->row = WP_Twitter_Stream_Db::get_tweet($id);
       $this->id = $this->row['id'];
-      $this->data = json_decode($this->row['raw_data']);
+      $this->data = $this->get_data();
       $this->read_hashtags();
     }
   }
@@ -73,6 +73,7 @@ class WP_Twitter_Stream_Tweet {
    */
   public function set_from_array($data) {
     $this->row = $data['tweet'];
+    $this->data = $this->get_data();
     $this->hashtags = $data['hashtags'];
   }
 
@@ -178,5 +179,13 @@ class WP_Twitter_Stream_Tweet {
       return false;
     }
     return true;
+  }
+
+  /**
+   * Get raw data got from Twitter API.
+   * @return array|mixed
+   */
+  public function get_data() {
+    return json_decode($this->row['raw_data']);
   }
 }
