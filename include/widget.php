@@ -113,13 +113,8 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     $this->reset();
     $tweets = $this->get_tweets();
     $templates = $this->get_template_names();
+    $template_file = $this->get_template_to_use();
 
-    if (
-      $this->instance_settings['template'] == 'auto'
-      || !$template_file = locate_template($templates)
-    ) {
-      $template_file = 'views/widget.php';
-    }
     $widget = $this;
     $display_title = $this->display_title();
     $debug_info = $this->get_debug();
@@ -301,6 +296,21 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       $templates[] = $this->instance_settings['template'];
     }
     return array_reverse($templates);
+  }
+
+  /**
+   * Get path to template file to use for widget.
+   * @return string
+   */
+  protected function get_template_to_use() {
+    $templates = $this->get_template_names();
+    if (
+      $this->instance_settings['template'] == 'auto'
+      || !$template_file = locate_template($templates)
+    ) {
+      $template_file = 'views/widget.php';
+    }
+    return $template_file;
   }
 
   /**
