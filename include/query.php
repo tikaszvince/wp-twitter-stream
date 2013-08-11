@@ -610,4 +610,20 @@ class WP_Twitter_Stream_Query {
     }
     return $this;
   }
+
+  /**
+   * Set reply filter.
+   * @param bool $enable
+   * @return WP_Twitter_Stream_Query
+   */
+  public function add_reply_filter($enable) {
+    $condition_name = 'reply_disable';
+    if ($enable) {
+      unset($this->where[$condition_name]);
+    }
+    else {
+      $this->add_condition('`tweets`.`reply` <> 1', array(), $condition_name);
+    }
+    return $this;
+  }
 }
