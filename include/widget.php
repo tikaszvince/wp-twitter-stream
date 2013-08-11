@@ -72,6 +72,12 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
   protected $queries = array();
 
   /**
+   * Flag to prevent reread tweets.
+   * @var bool
+   */
+  protected $read_ok = false;
+
+  /**
    * WP_Widget constructor.
    */
   public function WP_Twitter_Stream_Widget() {
@@ -236,6 +242,10 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
    * @see WP_Twitter_Stream_Db::get_tweets()
    */
   public function get_tweets() {
+    if ($this->read_ok) {
+      return $this->tweets;
+    }
+
     // Will read until tweet count reach the number the widget perform, but
     // we will try to fill the list only 3 times.
     $count = 10;
@@ -252,6 +262,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       $this->read_tweets();
     } while ($this->read_tries < $max_read && $count > count($this->tweets));
 
+    $this->read_ok = true;
     return $this->tweets;
   }
 
@@ -262,6 +273,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     $this->tweets = array();
     $this->queries = array();
     $this->read_tries = 0;
+    $this->read_ok = false;
   }
 
   /**
