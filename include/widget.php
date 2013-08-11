@@ -404,7 +404,11 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     $out = '';
     if ($this->instance_settings['dump_settings']) {
       $dump = new WP_Twitter_Stream_Dump($this->instance_settings);
-      $out .= $dump->output();
+      $out .=
+        '<section class="instance">' .
+          '<h4>' . __('Instance settings', WP_Twitter_Stream_Plugin::SLUG) . '</h4>' .
+          $dump->output() .
+        '</section>';
     }
 
     if ($this->instance_settings['dump_query']) {
@@ -414,7 +418,39 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
       }
 
       $dump = new WP_Twitter_Stream_Dump($queries);
-      $out .= $dump->output();
+      $out .=
+        '<section class="query">' .
+          '<h4>' . __('Query', WP_Twitter_Stream_Plugin::SLUG) . '</h4>' .
+          $dump->output() .
+        '</section>';
+    }
+
+    if ($this->instance_settings['dump_templates']) {
+      $used_template = '<b>' . $this->get_template_to_use() . '</b>';
+      if ($used_template == 'views/widget.php') {
+        $used_template .=
+          '<small><em>' .
+            __('default template deliverd by plugin', WP_Twitter_Stream_Plugin::SLUG) .
+          '</em></small>';
+      }
+
+      $dump = new WP_Twitter_Stream_Dump($this->get_template_names());
+      $out .=
+        '<section class="templates">' .
+          '<h4>' . __('Template candidates', WP_Twitter_Stream_Plugin::SLUG) . '</h4>' .
+          $dump->output() .
+          '<h4>' . __('Used template', WP_Twitter_Stream_Plugin::SLUG) . '</h4> ' .
+          $used_template .
+        '</section>';
+
+    }
+
+    if ($out) {
+      $out =
+        '<footer class="debug">' .
+          '<h3>' . __('Debug', WP_Twitter_Stream_Plugin::SLUG) . '</h3>' .
+          $out .
+        '</footer>';
     }
     return $out;
   }
