@@ -329,8 +329,16 @@ class WP_Twitter_Stream_Db {
   static public function update_tweet_display($id, $row) {
     $data = array(
       'display' => $row['display'],
+      'additional' => $row['additional'],
       'parser_version' => $row['parser_version'],
+
+      'rt' => $row['rt'],
+      'reply' => $row['reply'],
+      'has_media' => $row['has_media'],
+      'author_id' => $row['author_id'],
+      'author' => $row['author'],
     );
+
     $where = array('id' => $id);
     $format = array('%s', '%s');
     $where_format = array('%d');

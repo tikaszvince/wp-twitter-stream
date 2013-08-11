@@ -114,10 +114,8 @@ class WP_Twitter_Stream_Tweet {
     ) {
       $parser = new WP_Twitter_Stream_Parser($this->data);
       $display = $parser->display();
-      WP_Twitter_Stream_Db::update_tweet_display($this->id, array(
-        'display' => $display,
-        'parser_version' => $parser->get_version(),
-      ));
+      $parser->get_parsed_row();
+      WP_Twitter_Stream_Db::update_tweet_display($this->id, $parser->get_parsed_row());
     }
     return $display;
   }
