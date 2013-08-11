@@ -1,3 +1,6 @@
 [submodule "libs/twitter-api-php"]
 	path = libs/twitter-api-php
 	url = git@github.com:J7mbo/twitter-api-php.git
+[submodule "libs/tumblr-api-php"]
+	path = libs/tumblr-api-php
+	url = git@github.com:tumblr/tumblr.php.git
