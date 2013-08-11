@@ -263,7 +263,6 @@ class WP_Twitter_Stream_Parser {
           break;
       }
     }
-
     if (count($this->replacements) > 1) {
       usort($this->replacements, array($this, 'sort_replacements'));
     }
@@ -569,10 +568,15 @@ class WP_Twitter_Stream_Parser {
   protected function autoembed_linked_oembed($long_url) {
     /** @var WP_Embed $wp_embed */
     global $wp_embed;
-    $embedded = $wp_embed->autoembed($long_url);
-    if ($embedded != $long_url) {
+    $embedded = trim($wp_embed->autoembed($long_url));
+    if ($embedded != trim($long_url)) {
       return $embedded;
     }
+
+    if ($tumblr = trim($this->autoembed_linked_tumblr($long_url))) {
+      return $tumblr;
+    }
+
     return false;
   }
 
@@ -588,5 +592,19 @@ class WP_Twitter_Stream_Parser {
       $this->has_media = true;
     }
     return $this;
+  }
+
+  /**
+   * Get additional tumblr content.
+   * @param string $link
+   * @return string|bool
+   */
+  protected function autoembed_linked_tumblr($link) {
+    $tmblr = array();
+    if (preg_match('%^https?://(?P<blog>[^.]+\.tumblr.com)/post/(?P<id>\d+)%', $link, $tmblr)) {
+      // TODO: use tumblr-api-php to get tumblr post data for
+      // TODO: generating additional content.
+    }
+    return false;
   }
 }
