@@ -578,7 +578,7 @@ class WP_Twitter_Stream_Query {
   /**
    * Add condition to filter tweets by media.
    * @param $media_filter
-   * @return $this
+   * @return WP_Twitter_Stream_Query
    */
   public function media_filter_condition($media_filter = null) {
     if (isset($media_filter)) {
