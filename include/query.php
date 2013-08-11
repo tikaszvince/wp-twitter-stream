@@ -68,6 +68,12 @@ class WP_Twitter_Stream_Query {
   protected $where = array();
 
   /**
+   * Group by
+   * @var array
+   */
+  protected $group_by = array();
+
+  /**
    * Filter for these hashtag ids.
    * Combination with $filter_mode determine some query conditions.
    * @var array
@@ -411,6 +417,40 @@ class WP_Twitter_Stream_Query {
   }
 
   /**
+   * Add new group by logic.
+   *
+   * @param string $group_by
+   *   The field name.
+   * @param int $weight
+   *   The grouping weight.
+   *
+   * @return WP_Twitter_Stream_Query
+   */
+  public function add_group_by($group_by, $weight = 10) {
+    $weight = intval($weight);
+    if (!isset($this->group_by[$weight])) {
+      $this->group_by[$weight] = array();
+    }
+    $this->group_by[$weight][] = $group_by;
+    return $this;
+  }
+
+  /**
+   * Clean all previously defined group by settings and set a new one.
+   *
+   * @param $group_by
+   *   The field name.
+   * @param int $weight
+   *   The grouping weight.
+   *
+   * @return WP_Twitter_Stream_Query
+   */
+  public function set_group_by($group_by, $weight = 10) {
+    $this->group_by = array();
+    return $this->add_group_by($group_by, $weight);
+  }
+
+  /**
    * Alias for WP_Twitter_Stream_Query::__toString()
    * @return string
    */
@@ -439,12 +479,15 @@ class WP_Twitter_Stream_Query {
     if ($where = trim($this->get_query_where())) {
       $where = "WHERE\n" . preg_replace('%^%m', '  ', $where);
     }
+    if ($group_by = trim($this->get_query_group_by())) {
+      $group_by = "GROUP BY\n" . preg_replace('%^%m', '  ', $group_by);
+    }
     if ($order = trim($this->get_query_order())) {
       $order = "ORDER BY\n" . preg_replace('%^%m', '  ', $order);
     }
 
-    $sql = "\nSELECT {$fields}\nFROM\n{$table}\n{$where}\n{$order}\nLIMIT {$this->limit}";
-    return $sql;
+    $sql = "\nSELECT {$fields}\nFROM\n{$table}\n{$where}\n{$group_by}\n{$order}\nLIMIT {$this->limit}";
+    return preg_replace("%\n+%", "\n", $sql);
   }
 
   /**
@@ -511,6 +554,28 @@ class WP_Twitter_Stream_Query {
       return '';
     }
     return join(",\n", $this->orders);
+  }
+
+  /**
+   * Get SELECT SQL GROUP BY clause.
+   * @return string
+   */
+  protected function get_query_group_by() {
+    if (empty($this->group_by)) {
+      return '';
+    }
+
+    $_group_by = array();
+    ksort($this->group_by);
+    foreach ($this->group_by as $weight => $groups) {
+      foreach ($groups as $group_by) {
+        $_group_by[] = $group_by;
+      }
+    }
+    if (empty($_group_by)) {
+      return '';
+    }
+    return join(",\n", $_group_by);
   }
 
   /**
