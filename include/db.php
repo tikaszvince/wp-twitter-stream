@@ -406,6 +406,7 @@ class WP_Twitter_Stream_Db {
       $query->exclude_id($exclude_ids);
     }
     $query->media_filter_condition($instance['media_filter']);
+    $query->add_reply_filter(!$instance['hide_replies']);
 
     $result = $query->get_result();
     foreach ($result as $row) {
