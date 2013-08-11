@@ -507,22 +507,38 @@ class WP_Twitter_Stream_Query {
     if ($this->distinct) {
       $fields = "DISTINCT\n" .  preg_replace('%^%m', '  ', $fields);
     }
-    $table = preg_replace('%^%m', '  ', trim($this->get_query_from()));
+
+    // Start building query
+    $sql = array(
+      'SELECT ' . $fields,
+      'FROM ' . preg_replace('%^%m', '  ', trim($this->get_query_from())),
+    );
+
+    // Add WHERE clause if any.
     if ($where = trim($this->get_query_where())) {
-      $where = "WHERE\n" . preg_replace('%^%m', '  ', $where);
-    }
-    if ($group_by = trim($this->get_query_group_by())) {
-      $group_by = "GROUP BY\n" . preg_replace('%^%m', '  ', $group_by);
-    }
-    if ($having = trim($this->get_query_having())) {
-      $having = "HAVING\n" . preg_replace('%^%m', '  ', $having);
-    }
-    if ($order = trim($this->get_query_order())) {
-      $order = "ORDER BY\n" . preg_replace('%^%m', '  ', $order);
+      $sql[] = "WHERE\n" . preg_replace('%^%m', '  ', $where);
     }
 
-    $sql = "\nSELECT {$fields}\nFROM\n{$table}\n{$where}\n{$group_by}\n{$having}\n{$order}\nLIMIT {$this->limit}";
-    return preg_replace("%\n+%", "\n", $sql);
+    // Add GROUP BY clause if any.
+    if ($group_by = trim($this->get_query_group_by())) {
+      $sql[] = "GROUP BY\n" . preg_replace('%^%m', '  ', $group_by);
+    }
+
+    // Add HAVING clause if any.
+    if ($having = trim($this->get_query_having())) {
+      $sql[] = "HAVING\n" . preg_replace('%^%m', '  ', $having);
+    }
+
+    // Set ordering.
+    if ($order = trim($this->get_query_order())) {
+      $sql[] = "ORDER BY\n" . preg_replace('%^%m', '  ', $order);
+    }
+
+    // Limit the size of result set.
+    $sql[] = 'LIMIT ' . $this->limit;
+
+    // Beautify the query.
+    return preg_replace("%\n+%", "\n", join("\n", $sql));
   }
 
   /**
