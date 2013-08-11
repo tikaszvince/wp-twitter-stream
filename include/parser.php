@@ -65,6 +65,12 @@ class WP_Twitter_Stream_Parser {
   protected $additional_content = array();
 
   /**
+   * Set this true if parsed tweet has media content.
+   * @var bool
+   */
+  protected $has_media = false;
+
+  /**
    * Original tweet data.
    * @param stdClass $tweet
    */
@@ -111,6 +117,7 @@ class WP_Twitter_Stream_Parser {
         'last_checked' => $checked->format('Y-m-d H:i:s'),
         'rt' => $this->retweeted(),
         'reply' => $this->is_reply(),
+        'has_media' => $this->has_media,
         'author_id' => $this->tweet->user->id,
         'author' => $this->tweet->user->screen_name,
         'parser_version' => $this->get_version(),
