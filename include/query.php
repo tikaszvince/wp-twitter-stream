@@ -506,14 +506,13 @@ class WP_Twitter_Stream_Query {
    */
   public function __toString() {
     $fields = trim($this->get_query_fields());
-    if ($this->distinct) {
-      $fields = "DISTINCT\n" .  preg_replace('%^%m', '  ', $fields);
-    }
+    $distinct = $this->distinct ? ' DISTINCT' : '';
+    $_fields = str_replace(', ', ",\n", $fields);
 
     // Start building query
     $sql = array(
-      'SELECT ' . $fields,
-      'FROM ' . preg_replace('%^%m', '  ', trim($this->get_query_from())),
+      'SELECT' . $distinct . "\n" . preg_replace('%^%m', '  ',  $_fields),
+      "FROM\n" . preg_replace('%^%m', '  ', trim($this->get_query_from())),
     );
 
     // Add WHERE clause if any.
@@ -537,10 +536,12 @@ class WP_Twitter_Stream_Query {
     }
 
     // Limit the size of result set.
-    $sql[] = 'LIMIT ' . $this->limit;
+    if ($limit = intval($this->limit) > 0) {
+      $sql[] = 'LIMIT ' . $limit;
+    }
 
     // Beautify the query.
-    return preg_replace("%\n+%", "\n", join("\n", $sql));
+    return "\n" . preg_replace("%\n+%", "\n", join("\n", $sql));
   }
 
   /**
