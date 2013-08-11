@@ -151,6 +151,9 @@ class WP_Twitter_Stream_Db {
         continue;
       }
       $row[$col] = $data[$col];
+      if (is_bool($data[$col])) {
+        $row[$col] = $data[$col] ? 1 : 0;
+      }
       $formats[] = $format;
     }
 
@@ -325,24 +328,57 @@ class WP_Twitter_Stream_Db {
    *   The new values array with two key:
    *   - display: the new display value
    *   - parser_version: the version string of the new parser.
+   * @return int|false The number of rows updated, or false on error.
    */
   static public function update_tweet_display($id, $row) {
     $data = array(
-      'display' => $row['display'],
-      'additional' => $row['additional'],
-      'parser_version' => $row['parser_version'],
+      'display' => array(
+        'data' => $row['display'],
+        'format' => '%s',
+      ),
+      'additional' => array(
+        'data' => $row['additional'],
+        'format' => '%s',
+      ),
+      'parser_version' => array(
+        'data' => $row['parser_version'],
+        'format' => '%s',
+      ),
 
-      'rt' => $row['rt'],
-      'reply' => $row['reply'],
-      'has_media' => $row['has_media'],
-      'author_id' => $row['author_id'],
-      'author' => $row['author'],
+      'rt' => array(
+        'data' => $row['rt'],
+        'format' => '%d',
+      ),
+      'reply' => array(
+        'data' => $row['reply'],
+        'format' => '%d',
+      ),
+      'has_media' => array(
+        'data' => $row['has_media'],
+        'format' => '%d',
+      ),
+      'author_id' => array(
+        'data' => $row['author_id'],
+        'format' => '%d',
+      ),
+      'author' => array(
+        'data' => $row['author'],
+        'format' => '%s',
+      ),
     );
+    $fields = array();
+    $format = array();
+    foreach ($data as $name => $field) {
+      $fields[$name] = $field['data'];
+      if (is_bool($field['data'])) {
+        $fields[$name] = $field['data'] ? 1 : 0;
+      }
+      $format[] = $field['format'];
+    }
 
     $where = array('id' => $id);
-    $format = array('%s', '%s');
     $where_format = array('%d');
-    self::wpdb()->update(self::$tweets, $data, $where, $format, $where_format);
+    return self::wpdb()->update(self::$tweets, $fields, $where, $format, $where_format);
   }
 
   /**
