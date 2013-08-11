@@ -33,7 +33,7 @@ class WP_Twitter_Stream_Query {
    * Available values the constants defined by this class.
    * @var int
    */
-  protected $filter_mode = 0;
+  protected $filter_mode = self::FILTER_MODE_ALL;
 
   /**
    * Media filter mode
