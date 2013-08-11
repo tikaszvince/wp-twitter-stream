@@ -23,7 +23,7 @@ class WP_Twitter_Stream_Db {
   /**
    * DB version
    */
-  const VERSION = '1.0.0:11';
+  const VERSION = '1.0.0:13';
 
   /**
    * Prefixed name of the tweets table.
@@ -127,6 +127,7 @@ class WP_Twitter_Stream_Db {
       "CREATE TABLE {$tw2ht} (
         tid mediumint(9) NOT NULL,
         hid mediumint(9) NOT NULL,
+        manual_link TINYINT(1) DEFAULT 0 NOT NULL,
         PRIMARY KEY id (tid, hid)
       );",
     );
