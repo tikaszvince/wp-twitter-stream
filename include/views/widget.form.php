@@ -46,6 +46,18 @@
 <h3><?php _e('Filter tweets', WP_Twitter_Stream_Plugin::SLUG); ?></h3>
 
 <p>
+  <label>
+    <?php $checked = $this->instance_settings['hide_replies'] ? ' checked="checked"' : ''; ?>
+    <input type="hidden" name="<?php echo $this->get_field_name('hide_replies'); ?>" value="0" />
+    <input class="checkbox" type="checkbox"
+      name="<?php echo $this->get_field_name('hide_replies'); ?>"
+      value="1"<?php echo $checked ?>
+      />
+    <?php _e('Hide replies', WP_Twitter_Stream_Plugin::SLUG) ?>
+  </label>
+</p>
+
+<p>
   <label for="<?php echo $this->get_field_id('media_filter'); ?>">
     <?php _e('Media filter mode:', WP_Twitter_Stream_Plugin::SLUG); ?>
   </label>

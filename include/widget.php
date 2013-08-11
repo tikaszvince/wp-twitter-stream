@@ -48,6 +48,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     'dump_settings' => false,
     'force_re_parsing' => false,
     'media_filter' => WP_Twitter_Stream_Query::FILTER_MEDIA_DO_NOT_FILTER,
+    'hide_replies' => true,
   );
 
   /**
