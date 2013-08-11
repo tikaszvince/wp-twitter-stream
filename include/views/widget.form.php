@@ -154,8 +154,9 @@
         />
       <?php _e('Force re parsing tweet', WP_Twitter_Stream_Plugin::SLUG) ?>
     </label>
+  </p>
 
-    <br/>
+  <p>
     <label>
       <?php $checked = $this->instance_settings['dump_query'] ? ' checked="checked"' : ''; ?>
       <input type="hidden" name="<?php echo $this->get_field_name('dump_query'); ?>" value="0" />
@@ -165,8 +166,9 @@
         />
       <?php _e('Print SQL query', WP_Twitter_Stream_Plugin::SLUG) ?>
       </label>
+  </p>
 
-    <br/>
+  <p>
     <label>
       <?php $checked = $this->instance_settings['dump_settings'] ? ' checked="checked"' : ''; ?>
       <input type="hidden" name="<?php echo $this->get_field_name('dump_settings'); ?>" value="0" />
@@ -176,8 +178,9 @@
         />
       <?php _e('Print Widget settings', WP_Twitter_Stream_Plugin::SLUG) ?>
       </label>
+  </p>
 
-    <br/>
+  <p>
     <label>
       <?php $checked = $this->instance_settings['dump_templates'] ? ' checked="checked"' : ''; ?>
       <input type="hidden" name="<?php echo $this->get_field_name('dump_templates'); ?>" value="0" />
