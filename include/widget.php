@@ -158,6 +158,7 @@ class WP_Twitter_Stream_Widget extends WP_Widget {
     $instance['media_filter'] = intval($instance['media_filter']);
     $instance['hide_replies'] = (bool) $instance['hide_replies'];
 
+    $instance['force_re_parsing'] = (bool) $instance['force_re_parsing'];
     $instance['dump_query'] = (bool) $instance['dump_query'];
     $instance['dump_settings'] = (bool) $instance['dump_settings'];
     $instance['dump_templates'] = (bool) $instance['dump_templates'];
